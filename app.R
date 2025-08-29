@@ -83,7 +83,7 @@ eventDate <- reactiveVal()
 observeEvent(input$open_task_modal, {
   showModal(modalDialog(
     title = "Select Task to Run in VGS 5 Desktop",
-    selectInput("subject_choice", "Tasks", choices = c("Move Event to different Site")),
+    selectInput("subject_choice", "Tasks", choices = c("Move Event")),
     footer = tagList(
       modalButton("Cancel"),
       actionButton("submit_subject", "OK")
@@ -114,7 +114,7 @@ observeEvent(input$open_site_modal_A, {
     stop("No Sites Found...")
   }
   # make sure correct task is selected
-  if(input$subject_choice == "Move Event to different Site") {
+  if(input$subject_choice == "Move Event") {
     sitesFound <- sites$SiteID
   } else {
     sitesFound <- "Select A Site first"

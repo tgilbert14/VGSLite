@@ -24,9 +24,10 @@ To install VGSLite on your Windows device:
 
 After launching the app:
 
--   Select a site from the dropdown
--   Choose an event to reassign or troubleshoot
--   Click "Validate" to preview data issues
+-   ✅ Select a task from the drop-down (*e.g., "Move Event"*)
+-   ✅ Follow prompts (*e.g., Select Site to move from, Site to move to, and date of Event to move*)
+-   ✅ Confirm selection(s) to confirm and process changes
+-   ❌ (planned in future) Click "Review" to review data log
 
 ## License
 
