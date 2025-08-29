@@ -1,6 +1,7 @@
-# ![](assets/VGSLite.png)
+# ![VGSLite](www/assets/VGSLite.png){width="400"}
 
-VGSLite is a R based helper application built to support VGS Desktop on Windows devices. This app is made to help users do things not already build into the standalone application.
+**VGSLite** is a R based helper application built to support VGS Desktop on Windows devices.
+This app is made to help users do things not already build into the standalone application.
 
 ## Installation
 
