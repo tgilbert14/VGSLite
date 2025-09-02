@@ -8,8 +8,6 @@ ui <- fluidPage(
   useToastr(),
   useShinyjs(),
   theme = shinytheme("flatly"),
-  #cerulean, cosmo, cyborg, darkly, flatly, journal, lumen, paper, readable,
-  #sandstone, simplex, slate, spacelab, superhero, united, yeti
   
   titlePanel(""),
              
@@ -22,7 +20,7 @@ ui <- fluidPage(
                    actionButton("open_task_modal", "Choose task",width = "220px",
                                 icon = icon("list")),
                    br(),br(),
-                   downloadButton("download_db", "Download Backup Database"),
+                   #downloadButton("download_db", "Download Backup Database"),
                    br(),
                    textOutput("selected_sub")
                    )
@@ -34,8 +32,6 @@ ui <- fluidPage(
                             br(),
                             verbatimTextOutput("distText"),
                             DT::dataTableOutput("dataTable"),
-                            # actionButton("delete", "Delete Selected")
-                            
                             actionButton("open_readme", "About", icon = icon("book"))
                  ),
                  
@@ -61,7 +57,9 @@ ui <- fluidPage(
 
 # <-- Server -->
 server <- function(input, output, session) {
+  continue_app = TRUE
   # hide initial buttons/elements
+  shinyjs::hide("open_site_modal_A")
   shinyjs::hide("open_site_modal_B")
   shinyjs::hide("open_event_modal")
   shinyjs::hide("open_results_modal")
@@ -78,63 +76,73 @@ server <- function(input, output, session) {
     DT::datatable(d, rownames = FALSE, caption = "[ Database Preview of VGS 5 database on device ]", style = "bootstrap4")
   })
   
-  # define reactiveVal to hold selected site A
+  # define reactive values for moving site option
   siteA <- reactiveVal()
   siteB <- reactiveVal()
   eventInfo <- reactiveVal()
   eventDate <- reactiveVal() 
   
   # <-- Task Selection ->
-  # open task modal
   observeEvent(input$open_task_modal, {
-    showModal(modalDialog(
-      title = "Select Task to Run in VGS 5 Desktop",
-      selectInput("subject_choice", "Tasks", choices = c("Move Event")),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_subject", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/selectTask.R")
   })
   observeEvent(input$submit_subject, {
+    shinyjs::hide("open_task_modal")
+    shinyjs::show("open_site_modal_A")
+    
     subj <- input$subject_choice
     # confirm selection
     output$selected_sub <- renderPrint({
-      paste0("Task: ", subj)
+      cat(paste0("Task: ", subj))
     })
-    # drop modal
     removeModal()
-    # move to next tab
+    # move to next tab ->
     updateTabsetPanel(session, "tab_menu", selected = "help")
   })
-  
-  # <-- SITE FROM (A) -->
+    
+  ## <-- Move Event --> ##
+  # SITE FROM (A) -->
   # open site selection modal
   observeEvent(input$open_site_modal_A, {
     req(input$subject_choice)
     sites <- data_site()
     
-    # check for sites
-    if (nrow(sites) == 0) {
-      stop("No Sites Found...")
+    ## <-- Make everything Local ONLY --> ##
+    if (input$subject_choice == "Migrate to Local ONLY") {
+      source("scripts/localOnly.R")
+      continue_app = FALSE
+      shinyjs::hide("open_site_modal_A")
     }
-    # make sure correct task is selected
-    if(input$subject_choice == "Move Event") {
-      sitesFound <- sites$SiteID
-    } else {
-      sitesFound <- "Select A Site first"
+    
+    ## <-- Unlock VGS admin features --> ##
+    if (input$subject_choice == "Unlock VGS") {
+      source("scripts/unlockVGS.R")
+      continue_app = FALSE
+      shinyjs::hide("open_site_modal_A")
     }
-    # pop up for select FROM site
-    showModal(modalDialog(
-      title = "Moving FROM",
-      selectInput("site_choice", "FROM", choices = sitesFound),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_site_from", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    
+    if (continue_app == TRUE) {
+      # check for sites
+      if (nrow(sites) == 0) {
+        stop("No Sites Found...")
+      }
+      # make sure correct task is selected
+      if(input$subject_choice == "Move Event") {
+        sitesFound <- sites$SiteID
+      } else {
+        sitesFound <- "Select A Site first"
+      }
+      # pop up for select FROM site
+      showModal(modalDialog(
+        title = "Moving FROM",
+        selectInput("site_choice", "FROM", choices = sitesFound),
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton("submit_site_from", "OK")
+        ),
+        easyClose = TRUE
+      ))
+    }
   })
   observeEvent(input$submit_site_from, {
     siteFrom <- input$site_choice
@@ -143,17 +151,15 @@ server <- function(input, output, session) {
     siteA(sites[sites$SiteID == siteFrom, ])
     # confirm selection
     output$selected_siteFrom <- renderPrint({
-      paste0("Move Event from: ", siteFrom)
+      cat(paste0("Move Event from: ", siteFrom))
     })
-    # drop modal
     removeModal()
     # hide old selection and add new site B selection
     shinyjs::hide("open_site_modal_A")
     shinyjs::show("open_site_modal_B")
   })
   
-  # <-- SITE TO (B) -->
-  # open site selection modal
+  # SITE TO (B) -->
   observeEvent(input$open_site_modal_B, {
     req(input$subject_choice)
     sites <- data_site()
@@ -179,38 +185,35 @@ server <- function(input, output, session) {
     siteB(sites[sites$SiteID == siteTo, ])
     # confirm selection
     output$selected_siteTo <- renderPrint({
-      paste0("Move Event to: ", siteTo)
+      cat(paste0("Move Event to: ", siteTo))
     })
-    # drop modal
     removeModal()
     # hide old selection and add new site B selection
     shinyjs::hide("open_site_modal_B")
     shinyjs::show("open_event_modal")
   })
   
-  # <-- EVENT TO MOVE (FROM A TO B) -->
-  # open site selection modal
+  # EVENT TO MOVE (FROM A TO B) -->
   observeEvent(input$open_event_modal, {
     req(input$subject_choice)
     siteInfo <- siteA()
     
     # get events
     site_q <- paste0(
-      "SELECT Protocol.Date AS Date
-   FROM Protocol
-   INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
-   INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-   INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-   WHERE Site.PK_Site = ", siteInfo$PK_Site ," Order By Protocol.ProtocolName, Protocol.Date"
+      "SELECT Protocol.Date AS Date FROM Protocol
+          INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
+          INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
+          INNER JOIN Site ON Site.PK_Site = Event.FK_Site
+          WHERE Site.PK_Site = ", siteInfo$PK_Site, "
+          Order By Protocol.Date DESC, Protocol.ProtocolName"
     )
     
     event_info <- DBI::dbGetQuery(mydb, site_q)
     eventInfo(event_info)
-    
     # pop up for select events from site A
     showModal(modalDialog(
       title = paste0("Moving Event"),
-      selectInput("event_choice", "Move", choices = event_info$Date),
+      selectInput("event_choice", "Move", choices = substr(event_info$Date,1,10)),
       footer = tagList(
         modalButton("Cancel"),
         actionButton("submit_event", "OK")
@@ -221,23 +224,19 @@ server <- function(input, output, session) {
   observeEvent(input$submit_event, {
     dateTo <- input$event_choice
     info <- eventInfo()
-    
     # save event info
     eventDate(info[info$Date == dateTo, ])
-    
     # confirm selection
     output$selected_eventTo <- renderPrint({
-      paste0("Moving Event: ",substr(dateTo,1,10))
+      cat(paste0("Moving Event: ",substr(dateTo,1,10)))
     })
-    # drop modal
     removeModal()
     # hide old selection and add new site B selection
     shinyjs::hide("open_event_modal")
     shinyjs::show("open_results_modal")
-    
   })
   
-  # <-- RESULTS -->
+  # <-- RESULTS
   # open site selection modal
   observeEvent(input$open_results_modal, {
     moveFrom <- siteA()
@@ -260,19 +259,28 @@ server <- function(input, output, session) {
   })
   observeEvent(input$submit_confirm, {
     confirmTo <- input$confirm_choice
+    moveFrom <- siteA()
+    moveTo <- siteB()
+    onDate <- unique(eventDate())
     
     # merge sites!!
-    merge_q <- paste0("Update Site
-                    Set SiteID = 'WPF'
-                    where SiteID = 'WPF'")
+    merge_q <- paste0("Update Event
+                          SET FK_Site = ",moveTo$PK_Site,", SyncKey = SyncKey + 1
+                          Where PK_Event IN (
+                            Select PK_Event from Protocol
+                            INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol  
+                            INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
+                            INNER JOIN Site ON Site.PK_Site = Event.FK_Site
+                            where PK_Site = ",moveFrom$PK_Site,"
+                            and Date Like '%",onDate,"%')")
     r <- DBI::dbExecute(mydb, merge_q)
     
     # confirm selection
     output$selected_results <- renderPrint({
       if (r > 0) {
-        paste0("Success!")
+        cat("Success!")
       } else {
-        paste0("Something went wrong, please check you database or try again.")
+        cat("Something went wrong, please check you database or try again.")
       }
     })
     # drop modal
@@ -281,6 +289,7 @@ server <- function(input, output, session) {
     shinyjs::hide("open_results_modal")
   })
   
+  ## <-- Read me -->
   observeEvent(input$open_readme, {
     showModal(modalDialog(
       #title = "About VGSLite",
@@ -290,7 +299,7 @@ server <- function(input, output, session) {
     ))
   })
   
-  # download button
+  ## <-- download button -->
   output$download_db <- downloadHandler(
     filename = function() {
       paste0("SQL_storage_", Sys.Date(), ".db")
