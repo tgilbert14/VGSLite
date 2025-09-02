@@ -106,7 +106,7 @@ server <- function(input, output, session) {
       # Getting root folders and moving them under Local
       rootFolders <- dbGetQuery(mydb, "Select Schema from SyncTracking where Status = 'Completed'")
       locate_pks <- stringr::str_locate_all(rootFolders$Schema, "SelectedSchema")
-      
+       
       x=1
       while (x <= nrow(locate_pks[[1]])) {
         end <-  locate_pks[[1]][x]
