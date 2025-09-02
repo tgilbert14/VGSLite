@@ -5,6 +5,7 @@ library(RSQLite)
 library(uuid)
 library(shinytoastr)
 library(digest)
+library(stringr)
 library(shinyjs)
 library(shinythemes)
 
@@ -23,6 +24,20 @@ Convert2Hex <- function(vgs5_guid) {
     gsub("-", "", substr(guid, 17, 36))
   ))
   return(paste0("X'", hex_guid, "'"))
+}
+#Convert2Hex("f6aaf874-9867-404a-a46b-54991af4f766")
+
+# GUID creation
+GUID <- function(type = "pk", number_of_GUIDS = 1) {
+  ## generate generic GUID
+  g <- uuid::UUIDgenerate(n = number_of_GUIDS)
+  if (type == "pk") {
+    g2 <- paste0(
+      "X'", substr(g, 1, 8), substr(g, 10, 13), substr(g, 15, 18),
+      substr(g, 20, 23), substr(g, 25, 36), "'"
+    )
+  }
+  return(g2)
 }
 
 # Get Data
@@ -126,4 +141,37 @@ clear.orphan.contact <- paste0("delete from contact
 where PK_Contact NOT IN (
   select DISTINCT PK_Contact from Contact
   RIGHT JOIN ContactLink on ContactLink.FK_Contact = Contact.PK_Contact)")
+
+
+# <-- Converting database to Local -->
+
+updateToLocal.contactLinks <- paste0("Update ContactLink
+Set SyncState = 1")
+
+updateToLocal.sample <- paste0("Update Sample
+Set SyncState = 1")
+
+updateToLocal.events <- paste0("Update Event
+Set SyncState = 1")
+
+updateToLocal.eventGroups <- paste0("Update EventGroup
+Set SyncState = 1")
+
+updateToLocal.protocol <- paste0("Update Protocol
+Set SyncState = 1")
+
+updateToLocal.site <- paste0("Update Site
+Set SyncState = 1")
+
+updateToLocal.siteClass <- paste0("Update SiteClass
+Set SyncState = 1")
+
+updateToLocal.siteClassLinks <- paste0("Update SiteClassLink
+Set SyncState = 1")
+
+updateToLocal.inquiryDatum <- paste0("Update InquiryDatum
+Set SyncState = 1")
+
+updateToLocal.inquiry <- paste0("Update inquiry
+Set SyncState = 1")
 
