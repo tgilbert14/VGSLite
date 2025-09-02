@@ -98,6 +98,119 @@ server <- function(input, output, session) {
     removeModal()
     # move to next tab ->
     updateTabsetPanel(session, "tab_menu", selected = "help")
+    
+    ## <-- Make everything Local ONLY --> ##
+    if (input$subject_choice == "Convert database to Local") {
+      #continue_app = FALSE
+      
+      shinyjs::alert("✨ Complete! ☑") 
+      
+    }
+    
+    ## <-- Unlock VGS admin features --> ##
+    if (input$subject_choice == "Unlock VGS") {
+      #continue_app = FALSE
+      
+      shinyjs::alert("✨ Complete! ☑") 
+      
+    }
+    
+    ## <-- Cleaning up orphan data / non-linked data --> ##
+    if (input$subject_choice == "Clean Database") {
+      #continue_app = FALSE
+      result <- dbExecute(mydb, clear.orphan.siteClass)
+      if (result > 0) {
+        shinyjs::alert("✅ Cleaned SiteClassLink orphans!")
+      } else {
+        shinyjs::alert("⚠️ No orphan'd SiteClassLinks.")
+      }
+      
+      result <- dbExecute(mydb, clear.orphan.protocol)
+      if (result > 0) {
+        shinyjs::alert("✅ Cleaned Protocol orphans!")
+      } else {
+        shinyjs::alert("⚠️ No orphan'd Protocols.")
+      }
+      
+      result <- dbExecute(mydb, clear.orphan.typeList)
+      if (result > 0) {
+        shinyjs::alert("✅ Cleaned unused Protocols in TypeList!")
+      } else {
+        shinyjs::alert("⚠️ All Protocols in TypeList being used.")
+      }
+      
+      result <- dbExecute(mydb, clear.orphan.contactLink)
+      if (result > 0) {
+        shinyjs::alert("✅ Cleaned ContactLink orphans!")
+      } else {
+        shinyjs::alert("⚠️ No orphan'd ContactLinks.")
+      }
+      
+      result <- dbExecute(mydb, clear.orphan.contact)
+      if (result > 0) {
+        shinyjs::alert("✅ Cleaned unused Contacts!")
+      } else {
+        shinyjs::alert("⚠️ All Contacts being used.")
+      }
+      
+      shinyjs::alert("✨ Complete! ☑") 
+    }
+    
+    ## <-- Cleaning up orphan data / non-linked data --> ##
+    if (input$subject_choice == "Delete Unassigned data") {
+      #continue_app = FALSE
+      
+      result <- dbExecute(mydb, clear.unassigned.sample)
+      if (result > 0) {
+        shinyjs::alert("✅ Unassigned sample data cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ No unassigned sample data.")
+      }
+      
+      result <- dbExecute(mydb, clear.unassigned.inq)
+      if (result > 0) {
+        shinyjs::alert("✅ Unassigned inquiry data cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ No unassigned inquiry data.")
+      }
+      
+      result <- dbExecute(mydb, clear.unassigned.event)
+      if (result > 0) {
+        shinyjs::alert("✅ Unassigned events cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ No unassigned events.")
+      }
+      
+      result <- dbExecute(mydb, clear.unassigned.eventGroup)
+      if (result > 0) {
+        shinyjs::alert("✅ Unassigned inquiry cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ No unassigned event groups.")
+      }
+      
+      result <- dbExecute(mydb, clear.unassigned.site)
+      if (result > 0) {
+        shinyjs::alert("✅ Unassigned sites cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ No unassigned sites.")
+      }
+      
+      shinyjs::alert("✨ Complete! ☑")  
+    }
+    
+    ## <-- Cleaning up orphan data / non-linked data --> ##
+    if (input$subject_choice == "Empty Tombstone") {
+      #continue_app = FALSE
+      result <- dbExecute(mydb, clear.tombstone)
+      if (result > 0) {
+        shinyjs::alert("✅ Tombstone cleared successfully!")
+      } else {
+        shinyjs::alert("⚠️ Tombstone records are empty.")
+      }
+      
+      shinyjs::alert("✨ Complete! ☑") 
+    }
+    
   })
     
   ## <-- Move Event --> ##
@@ -106,21 +219,7 @@ server <- function(input, output, session) {
   observeEvent(input$open_site_modal_A, {
     req(input$subject_choice)
     sites <- data_site()
-    
-    ## <-- Make everything Local ONLY --> ##
-    if (input$subject_choice == "Migrate to Local ONLY") {
-      source("scripts/localOnly.R")
-      continue_app = FALSE
-      shinyjs::hide("open_site_modal_A")
-    }
-    
-    ## <-- Unlock VGS admin features --> ##
-    if (input$subject_choice == "Unlock VGS") {
-      source("scripts/unlockVGS.R")
-      continue_app = FALSE
-      shinyjs::hide("open_site_modal_A")
-    }
-    
+
     if (continue_app == TRUE) {
       # check for sites
       if (nrow(sites) == 0) {
