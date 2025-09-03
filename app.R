@@ -9,7 +9,7 @@ ui <- fluidPage(
   useShinyjs(),
   theme = shinytheme("flatly"),
   
-  titlePanel(""),
+  # titlePanel(""),
              
              sidebarLayout(
                sidebarPanel(

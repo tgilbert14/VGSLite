@@ -2,6 +2,10 @@
 .Rhistory
 .Rapp.history
 
+# Large files
+*R-Portable
+*node_modules
+
 # Session Data files
 .RData
 .RDataTmp

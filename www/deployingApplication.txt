@@ -1,0 +1,61 @@
+## Deploying application
+
+install R Portable in dir
+
+install packages in it... install.packages("shiny")
+
+at some point i added a new package and had to load new package in R.exe
+(R Portal > App > R-Portable > bin > R.exe) .. try loading libraries, if not, install
+
+## Add main.js file with relevant connections
+
+## Add package.json file with relevant start up information
+
+## Run shiny::runApp() and check port number, update main.js with correct port
+
+## Install other dependencies
+npm install sqlite3 --save
+
+## Fix issues with build (optional)
+npm audit fix --force
+
+## Missing stage-0
+npm install --save-dev babel-preset-stage-0
+
+npx electron-rebuild
+npm install --save-dev electron-rebuild
+
+## Getting stuck so starting again...
+rm -rf node_modules package-lock.json
+npm install
+npx electron-rebuild
+
+
+## More optional steps if already built
+##npx electron-rebuild -w sqlite3 -p
+##npm install electron-rebuild --save-dev
+
+## package app
+electron-packager . VGSLite --platform=win32 --arch=x64 --out=dist/ --overwrite
+#electron-packager . VGSLite --platform=darwin --arch=x64 --out=dist/ --overwrite
+#electron-packager . VGSLite --platform=linux --arch=x64 --out=dist/ --overwrite
+
+## dont need this... only in certain situations...
+##npm run build
+
+
+## other things...
+## Open terminal (in R app directory) and start electron (should run in another window) to check it works
+##npm start
+
+##install electron packager,
+##npm install -g electron-packager
+
+## need to package better.....
+npm install --save-dev electron-builder
+
+npm run dist
+npm run release
+
+
+
