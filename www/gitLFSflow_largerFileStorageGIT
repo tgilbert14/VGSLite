@@ -9,5 +9,8 @@ git lfs track "*.zip"
 
 #Now make sure .gitattributes is tracked:
 git add .gitattributes
-#git lfs migrate(1) 
 
+#Push Changes
+git add 'VGSLite Setup 1.1.0.zip'
+git commit -m "pushing set up VGSLite.exe file"
+git push origin main
