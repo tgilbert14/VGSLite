@@ -21,9 +21,6 @@
 # Output files from R CMD build
 /*.tar.gz
 
-# Large zip files
-/*.zip
-
 # Output files from R CMD check
 /*.Rcheck/
 
