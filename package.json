@@ -21,7 +21,8 @@
     "electron",
     "sqlite",
     "local storage",
-    "data collection"
+    "data collection",
+    "VGS"
   ],
   "scripts": {
     "start": "electron .",
