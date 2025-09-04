@@ -6,7 +6,7 @@ showModal(modalDialog(
                                                      "Convert database to Local",
                                                      "Delete Unassigned data",
                                                      "Empty Tombstone",
-                                                     "Move Event",
+                                                     "Move Event"#,
                                                      #"Unlock VGS"
                                                      )),
   footer = tagList(

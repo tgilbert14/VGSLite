@@ -96,9 +96,12 @@ server <- function(input, output, session) {
       cat(paste0("Task: ", subj))
     })
     removeModal()
-    # move to next tab ->
-    updateTabsetPanel(session, "tab_menu", selected = "help")
     
+    if (input$subject_choice == "Move Event") {
+      # move to next tab ->
+      updateTabsetPanel(session, "tab_menu", selected = "help")
+    }
+
     ## <-- Make everything Local ONLY --> ##
     if (input$subject_choice == "Convert database to Local") {
       #continue_app = FALSE
