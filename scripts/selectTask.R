@@ -2,12 +2,12 @@
 
 showModal(modalDialog(
   title = "Select Task to Run in VGS 5 Desktop",
-  selectInput("subject_choice", "Tasks", choices = c("Move Event",
-                                                     "Clean Database",
-                                                     "Delete Unassigned data",
+  selectInput("subject_choice", "Tasks", choices = c("Clean Database",
                                                      "Convert database to Local",
-                                                     #"Unlock VGS",
-                                                     "Empty Tombstone"
+                                                     "Delete Unassigned data",
+                                                     "Empty Tombstone",
+                                                     "Move Event",
+                                                     #"Unlock VGS"
                                                      )),
   footer = tagList(
     modalButton("Cancel"),

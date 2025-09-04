@@ -1,34 +1,37 @@
 # ![VGSLite](www/assets/VGSLite.png)
 
-**VGSLite** is a R based helper application built to support VGS Desktop on Windows devices.
-This app is made to help users do things not already build into the standalone application.
+**VGSLite** is a R based helper application built to support VGS 5 Desktop on Windows devices.
 
 ## Installation
 
-To install VGSLite on your Windows device:
+To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows device:
 
-1.  Download the latest release from ❌ [GitHub Releases](link) (in process...)
+1.  Download the latest release from [VGSLite 1.1.0](https://github.com/tgilbert14/VGSLite/blob/main/VGSLite%20Setup%201.1.0.zip).
 2.  Unzip the folder and run `VGSLite.exe`.
-3.  No internet connection required after installation.
 
 ## Features
 
--   ✅ Move and reassign events between VGS sites
+-   ✅ Clean Database: Cleans up any orphan data links that may exist to help prevent corrupt data. Often used before "Empty Tombstone" to troubleshoot sync issues.
 
--   ❌ (planned in future) Troubleshoot missing or corrupted data entries
+-   ✅ Convert database to Local: Moves cloud data into local folders. Not recommended unless you plan on only collecting data locally.
 
--   ❌ (planned in future) Preview and validate site-level data before syncing
+-   ✅ Delete Unassigned data: Deletes all data and sites inside the "Unassigned" bin at once instead of going though each event.
 
--   ❌ (planned in future) Export filtered datasets for manual review
+-   ✅ Empty Tombstone: Clears deletion cache, often used to troubleshoot sync issues.
+
+-   ✅ Move Event: Lets user move a single event from an existing site to another site. Often used when an event was put on the wrong site. This **WILL NOT UPDATE SYNC STATE** *(i.e., cloud-to-local or local-to-cloud).*
 
 ## Usage
 
 After launching the app:
 
--   ✅ Select a task from the drop-down (*e.g., "Move Event"*)
--   ✅ Follow prompts (*e.g., Select Site to move from, Site to move to, and date of Event to move*)
--   ✅ Confirm selection(s) to confirm and process changes
--   ❌ (planned in future) Click "Review" to review data log
+-   ✅ Select a task from the drop-down (*e.g., "Move Event"*).
+
+-   ✅ Follow prompts (*e.g., Select Site to **move from**, Site to **move to**, and **date of Event** to move, then confirm selections*).
+
+-   ✅ Click through confirmation pop-ups to see what is being done.
+
+-   ✅ Make sure to close out VGS 5 if open, and reopen it to confirm changes.
 
 ## License
 
