@@ -503,7 +503,7 @@ server <- function(input, output, session) {
   observeEvent(input$open_readme, {
     showModal(modalDialog(
       #title = "About VGSLite",
-      includeMarkdown("README.html"),
+      includeMarkdown("README.md"),
       easyClose = TRUE,
       footer = modalButton("Close")
     ))

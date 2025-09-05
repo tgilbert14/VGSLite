@@ -54,7 +54,8 @@ electron-packager . VGSLite --platform=win32 --arch=x64 --out=dist/ --overwrite
 ## need to package better.....
 npm install --save-dev electron-builder
 
-npm run dist
+## these are set to do the same thing in my package.json
+#npm run dist
 npm run release
 
 
