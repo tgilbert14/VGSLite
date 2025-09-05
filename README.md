@@ -6,9 +6,9 @@
 
 To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows device:
 
-1.  Download the latest release from [VGSLite 1.1.0](https://github.com/tgilbert14/VGSLite/blob/main/VGSLite%20Setup%201.1.0.zip).
-2.  Unzip the folder and run `VGSLite Setup 1.1.0.exe`.
-3.   You may have to click "more info" in order to install the application.
+1.  Download the latest release from [VGSLite 1.2.0](https://github.com/tgilbert14/VGSLite/blob/main/VGSLite%20Setup%201.2.0.zip).
+2.  Unzip the folder and run `VGSLite Setup 1.2.0.exe`.
+3.  You may have to click "more info" in order to install the application.
 
 ## Features
 
