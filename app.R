@@ -110,13 +110,22 @@ server <- function(input, output, session) {
       #continue_app = FALSE
       
       # Getting root folders and moving them under Local
-      rootFolders <- dbGetQuery(mydb, "Select Schema from SyncTracking where Status = 'Completed'")
+      rootFolders <- dbGetQuery(mydb, "Select Schema from SyncTracking where Status LIKE '%Complete%'")
       locate_pks <- stringr::str_locate_all(rootFolders$Schema, "SelectedSchema")
-       
+     
       x=1
       while (x <= nrow(locate_pks[[1]])) {
-        end <-  locate_pks[[1]][x]
-        rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[1])
+        end <- locate_pks[[1]][x]
+        
+        # change schema for certain situations (VGSOnline server)
+        if (is.na(end)) {
+          end <- locate_pks[[2]][x]
+          rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[2])
+        } else {
+          # follow normal conversion
+          rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[1])
+        }
+        
         dbExecute(mydb, paste0("Update SiteClass
           Set CK_ParentClass = X'11111111111111111111111111111111' 
           Where PK_SiteClass = ",rootPK))
@@ -496,24 +505,14 @@ server <- function(input, output, session) {
         cat("Something went wrong, please check you database or try again.")
       }
     })
-    # drop modal
     removeModal()
-    # hide old selection
     shinyjs::hide("open_results_modal")
   })
   
   ## <-- Read me -->
-  # observeEvent(input$open_readme, {
-  #   showModal(modalDialog(
-  #     #title = "About VGSLite",
-  #     includeMarkdown("README.md"),
-  #     easyClose = TRUE,
-  #     footer = modalButton("Close")
-  #   ))
-  # })
-  ## <-- Link to Read me instead -->
   observeEvent(input$open_readme, {
-    session$sendCustomMessage(type = "jsCode", list(code = "window.open('https://github.com/tgilbert14/VGSLite#readme', '_blank');"))
+    #session$sendCustomMessage(type = "jsCode", list(code = "window.open('https://github.com/tgilbert14/VGSLite#readme', '_blank');"))
+    session$sendCustomMessage(type = "jsCode", list(code = "window.open('README.html', '_blank');"))
   })
   
   ## <-- download button -->
