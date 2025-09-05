@@ -8,6 +8,9 @@ ui <- fluidPage(
   useToastr(),
   useShinyjs(),
   theme = shinytheme("flatly"),
+  # for Read me link
+  tags$script('Shiny.addCustomMessageHandler("jsCode", function(message) {
+  eval(message.code); });'),
   
   # titlePanel(""),
              
@@ -500,13 +503,17 @@ server <- function(input, output, session) {
   })
   
   ## <-- Read me -->
+  # observeEvent(input$open_readme, {
+  #   showModal(modalDialog(
+  #     #title = "About VGSLite",
+  #     includeMarkdown("README.md"),
+  #     easyClose = TRUE,
+  #     footer = modalButton("Close")
+  #   ))
+  # })
+  ## <-- Link to Read me instead -->
   observeEvent(input$open_readme, {
-    showModal(modalDialog(
-      #title = "About VGSLite",
-      includeMarkdown("README.md"),
-      easyClose = TRUE,
-      footer = modalButton("Close")
-    ))
+    session$sendCustomMessage(type = "jsCode", list(code = "window.open('https://github.com/tgilbert14/VGSLite#readme', '_blank');"))
   })
   
   ## <-- download button -->
