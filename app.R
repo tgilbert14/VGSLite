@@ -17,7 +17,7 @@ ui <- fluidPage(
                    style = "text-align: center; margin-top: 10px;",
                    tags$img(src = "assets/VGSLite.png", width = "220px", style = "margin-bottom:20px;"),
                    
-                   actionButton("open_task_modal", "Choose task",width = "220px",
+                   actionButton("open_task_modal", "Choose task",width = "100%",
                                 icon = icon("list")),
                    br(),br(),
                    #downloadButton("download_db", "Download Backup Database"),
@@ -28,14 +28,14 @@ ui <- fluidPage(
                mainPanel(
                  tabsetPanel(id = "tab_menu",
 
-                   tabPanel("Main Window", value = "main",
-                            br(),
+                   tabPanel("Main Window", value = "main", 
+                            br(), actionButton("open_readme", "About", icon = icon("book"), width = "100px"), br(),br(),
                             verbatimTextOutput("distText"),
-                            DT::dataTableOutput("dataTable"),
-                            actionButton("open_readme", "About", icon = icon("book"))
+                            DT::dataTableOutput("dataTable")#,
+                            #actionButton("open_readme", " ", icon = icon("info"), width = "40px"),
                  ),
                  
-                 tabPanel("Help Window", value = "help", br(),
+                 tabPanel("Help Window", value = "help", br(), 
                           actionButton("open_site_modal_A", "Moving FROM",
                                        icon = icon(	"arrow-left")), br(),
                           textOutput("selected_siteFrom"),
@@ -209,7 +209,7 @@ server <- function(input, output, session) {
     if (input$subject_choice == "Unlock VGS") {
       #continue_app = FALSE
       
-      shinyjs::alert("✨ Complete! ☑") 
+      #shinyjs::alert("✨ Complete! ☑") 
       
     }
     
@@ -421,7 +421,7 @@ server <- function(input, output, session) {
     # pop up for select events from site A
     showModal(modalDialog(
       title = paste0("Moving Event"),
-      selectInput("event_choice", "Move", choices = substr(event_info$Date,1,10)),
+      selectInput("event_choice", "Move", choices = event_info$Date),
       footer = tagList(
         modalButton("Cancel"),
         actionButton("submit_event", "OK")
@@ -432,6 +432,7 @@ server <- function(input, output, session) {
   observeEvent(input$submit_event, {
     dateTo <- input$event_choice
     info <- eventInfo()
+
     # save event info
     eventDate(info[info$Date == dateTo, ])
     # confirm selection
@@ -449,8 +450,8 @@ server <- function(input, output, session) {
   observeEvent(input$open_results_modal, {
     moveFrom <- siteA()
     moveTo <- siteB()
-    onDate <- eventDate()
-    onDate <- unique(onDate)
+    onDate_saved <- eventDate()
+    onDate <- unique(onDate_saved)
     
     # pop up for select FROM site
     showModal(modalDialog(
@@ -471,7 +472,7 @@ server <- function(input, output, session) {
     moveTo <- siteB()
     onDate <- unique(eventDate())
     
-    # merge sites!!
+    # merge event to new site
     merge_q <- paste0("Update Event
                           SET FK_Site = ",moveTo$PK_Site,", SyncKey = SyncKey + 1
                           Where PK_Event IN (
@@ -481,6 +482,7 @@ server <- function(input, output, session) {
                             INNER JOIN Site ON Site.PK_Site = Event.FK_Site
                             where PK_Site = ",moveFrom$PK_Site,"
                             and Date Like '%",onDate,"%')")
+    
     r <- DBI::dbExecute(mydb, merge_q)
     
     # confirm selection

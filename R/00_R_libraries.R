@@ -1,0 +1,11 @@
+# load packages
+library(shiny)
+library(DT)
+library(DBI)
+library(RSQLite)
+library(uuid)
+library(shinytoastr)
+library(digest)
+library(stringr)
+library(shinyjs)
+library(shinythemes)

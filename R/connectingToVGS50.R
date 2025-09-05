@@ -1,13 +1,4 @@
-library(shiny)
-library(DT)
-library(DBI)
-library(RSQLite)
-library(uuid)
-library(shinytoastr)
-library(digest)
-library(stringr)
-library(shinyjs)
-library(shinythemes)
+
 
 # connect to local database
 db_loc <- "C:/ProgramData/VGSData/VGS50.db"
