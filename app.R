@@ -19,44 +19,46 @@ ui <- fluidPage(
                  div(
                    style = "text-align: center; margin-top: 10px;",
                    tags$img(src = "assets/VGSLite.png", width = "220px", style = "margin-bottom:20px;"),
-                   
+                   # choose task
                    actionButton("open_task_modal", "Choose task",width = "100%",
-                                icon = icon("list")),
-                   br(),br(),
-                   #downloadButton("download_db", "Download Backup Database"),
-                   br(),
-                   textOutput("selected_sub")
+                                icon = icon("list")),br(),br(),
+                   textOutput("selected_sub"),br(),
+                   # for running another task after 1st task ran
+                   uiOutput("task_complete_ui")
                    )
-                 ),
+                 ), # end of side panel
                mainPanel(
                  tabsetPanel(id = "tab_menu",
 
-                   tabPanel("Main Window", value = "main", 
-                            br(), actionButton("open_readme", "About", icon = icon("book"), width = "100px"), br(),br(),
+                   tabPanel("Main Window", value = "main", br(),
+                            fluidRow(
+                              actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
+                              downloadButton("download_db", "Database Backup")),
+                            
+                            
+                            #actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
+                            br(),br(),
                             verbatimTextOutput("distText"),
-                            DT::dataTableOutput("dataTable")#,
-                            #actionButton("open_readme", " ", icon = icon("info"), width = "40px"),
-                 ),
-                 
-                 tabPanel("Help Window", value = "help", br(), 
-                          actionButton("open_site_modal_A", "Moving FROM",
-                                       icon = icon(	"arrow-left")), br(),
-                          textOutput("selected_siteFrom"),
-                          textOutput("selected_siteTo"),
-                          textOutput("selected_eventTo"),
-                          textOutput("selected_results"),
-                          actionButton("open_site_modal_B", "Moving TO",
-                                       icon = icon(	"arrow-right")), br(),
-                          actionButton("open_event_modal", "Select Event to MOVE",
-                                       icon = icon("exchange-alt")), br(),
-                          actionButton("open_results_modal", "Confirm Merge",
-                                       icon = icon("play"))
-                 )
-                 
-               )
-               )
-             )
-)
+                            DT::dataTableOutput("dataTable")
+                            ), # end main window tab
+                   tabPanel("Help Window", value = "help", br(), 
+                            actionButton("open_site_modal_A", "Moving FROM",
+                                         icon = icon(	"arrow-left")), br(),
+                            textOutput("selected_siteFrom"),
+                            textOutput("selected_siteTo"),
+                            textOutput("selected_eventTo"),
+                            textOutput("selected_results"),
+                            actionButton("open_site_modal_B", "Moving TO",
+                                         icon = icon(	"arrow-right")), br(),
+                            actionButton("open_event_modal", "Select Event to MOVE",
+                                         icon = icon("exchange-alt")), br(),
+                            actionButton("open_results_modal", "Confirm Merge",
+                                         icon = icon("play"))
+                            ) # end help window tab
+                   ) # end of all tabs
+                ) # end of Main Panel
+               ) # end of Side Bar layout
+  ) # end of UI
 
 # <-- Server -->
 server <- function(input, output, session) {
@@ -332,6 +334,11 @@ server <- function(input, output, session) {
       shinyjs::alert("✨ Complete! ☑") 
     }
     
+    ## add Run new task option
+    output$task_complete_ui <- renderUI({
+      actionButton("run_another_task", "Run Another Task", icon = icon("redo"))
+    })
+    
   })
     
   ## <-- Move Event --> ##
@@ -515,16 +522,43 @@ server <- function(input, output, session) {
     session$sendCustomMessage(type = "jsCode", list(code = "window.open('README.html', '_blank');"))
   })
   
+  ## <--  Run another task/refresh app button -->
+  observeEvent(input$run_another_task, {
+    # Reset reactive values
+    siteA(NULL)
+    siteB(NULL)
+    eventInfo(NULL)
+    eventDate(NULL) 
+    
+    shinyjs::show("open_task_modal")
+    shinyjs::hide("run_another_task")
+
+    # Reset tab
+    updateTabsetPanel(session, "tab_menu", selected = "main")
+    
+    # Clear outputs
+    output$selected_sub <- renderPrint({"Select new task to run"})
+    output$selected_siteFrom <- renderPrint({"Select new task attributes"})
+    output$selected_siteTo <- renderPrint({"Select new task attributes"})
+    output$selected_eventTo <- renderPrint({"Select new task attributes"})
+    output$selected_results <- renderPrint({"Select new task attributes"})
+  })
+  
   ## <-- download button -->
   output$download_db <- downloadHandler(
     filename = function() {
-      paste0("SQL_storage_", Sys.Date(), ".db")
+      paste0("VGSLite_Backup_", Sys.Date(), ".db")
     },
     content = function(file) {
-      file.copy(db_loc, file, overwrite = TRUE)
+      if (file.exists(db_loc)) {
+        file.copy(from = db_loc, to = file, overwrite = TRUE)
+      } else {
+        stop("Database file not found at: ", db_loc)
+      }
     },
     contentType = "application/octet-stream"
   )
+  
   
   # disconnect database on session end
   session$onSessionEnded(function() {

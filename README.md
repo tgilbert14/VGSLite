@@ -6,21 +6,21 @@
 
 To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows device:
 
-1.  Download the latest release from [VGSLite 1.2.0](https://github.com/tgilbert14/VGSLite/blob/main/VGSLite%20Setup%201.2.0.zip).
-2.  Unzip the folder and run `VGSLite Setup 1.2.0.exe`.
+1.  Download the latest release from [VGSLite 1.3](https://github.com/tgilbert14/VGSLite/blob/main/VGSLite%20Setup%201.2.0.zip).
+2.  Unzip the folder and run `VGSLite Setup 1.3.0.exe`.
 3.  You may have to click "more info" in order to install the application.
 
 ## Features
 
--   ✅ Clean Database: Cleans up any orphan data links that may exist to help prevent corrupt data. Often used before "Empty Tombstone" to troubleshoot sync issues.
+-   ✅ **Clean Database:** Cleans up any orphan data links that may exist to help prevent corrupt data. Often used before "Empty Tombstone" to troubleshoot sync issues.
 
--   ✅ Convert database to Local: Moves cloud data into local folders. Not recommended unless you plan on only collecting data locally.
+-   ✅ **Convert database to Local:** Moves cloud data into local folders. Not recommended unless you plan on only collecting data locally.
 
--   ✅ Delete Unassigned data: Deletes all data and sites inside the "Unassigned" bin at once instead of going though each event.
+-   ✅ **Delete Unassigned data:** Deletes all data and sites inside the "Unassigned" bin at once instead of going though each event.
 
--   ✅ Empty Tombstone: Clears deletion cache, often used to troubleshoot sync issues.
+-   ✅ **Empty Tombstone:** Clears deletion cache, often used to troubleshoot sync issues.
 
--   ✅ Move Event: Lets user move a single event from an existing site to another site. Often used when an event was put on the wrong site. This **WILL NOT UPDATE SYNC STATE** *(i.e., cloud-to-local or local-to-cloud).*
+-   ✅ **Move Event:** Lets user move a single event from an existing site to another site. Often used when an event was put on the wrong site. This **WILL NOT UPDATE SYNC STATE** *(i.e., cloud-to-local or local-to-cloud).*
 
 ## Usage
 
