@@ -33,7 +33,12 @@ ui <- fluidPage(
                    tabPanel("Main Window", value = "main", br(),
                             fluidRow(
                               actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
-                              downloadButton("download_db", "Database Backup")),
+                              downloadButton("download_db", "Database Backup"),
+                              #actionButton("git", "GitHub"),
+                              tags$a(href = "https://github.com/tgilbert14/VGSLite", target = "_blank",
+                                     tags$img(src = "GitHub-Mark.png", 
+                                              height = "40px", style = "margin-top:5px;"))
+                              ),
                             
                             
                             #actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
@@ -73,6 +78,11 @@ server <- function(input, output, session) {
   data_site <- reactive({
     dbGetQuery(mydb, "SELECT SiteID, Notes, quote(PK_Site) AS PK_Site FROM Site Order By SiteID")
   })
+  
+  # # GitHub button
+  # observeEvent(input$git, {
+  #   runjs("window.open('https://github.com/tgilbert14/VGSLite', '_blank')")
+  # })
   
   # initial table render
   output$dataTable <- DT::renderDataTable({
