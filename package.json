@@ -1,6 +1,6 @@
 {
   "name": "VGSLite",
-  "version": "1.5.0",
+  "version": "2.0.0",
   "description": "VGSLite - Offline Shiny app for VGS 5 Desktop help.",
   "main": "main.js",
   "author": {
@@ -64,9 +64,9 @@
       "oneClick": false,
       "perMachine": true,
       "allowToChangeInstallationDirectory": true,
-      "uninstallDisplayName": "VGSLite 1.5",
+      "uninstallDisplayName": "VGSLite 2.0",
       "createDesktopShortcut": true,
-      "shortcutName": "VGSLite 1.5",
+      "shortcutName": "VGSLite 2.0",
       "runAfterFinish": true,
       "installerIcon": "www/assets/VGSLite.ico",
       "uninstallerIcon": "www/assets/VGSLite.ico",
