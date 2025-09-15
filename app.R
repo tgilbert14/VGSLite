@@ -8,25 +8,39 @@ ui <- fluidPage(
   useToastr(),
   useShinyjs(),
   theme = shinytheme("flatly"),
+  
   # for Read me link
   tags$script('Shiny.addCustomMessageHandler("jsCode", function(message) {
   eval(message.code); });'),
   
-  # titlePanel(""),
-             
              sidebarLayout(
                sidebarPanel(
                  div(
                    style = "text-align: center; margin-top: 10px;",
-                   tags$img(src = "assets/VGSLite.png", width = "220px", style = "margin-bottom:20px;"),
+                   tags$img(src = "assets/VGSLite.png", width = "360px", style = "margin-bottom:30px;"),
+                   
                    # choose task
-                   actionButton("open_task_modal", "Choose task",width = "100%",
-                                icon = icon("list")),br(),br(),
+                   actionButton(
+                     title = "Select task to run",
+                     inputId = "open_task_modal",
+                     label = tags$img(
+                       src = "icons8-plus-144.png",
+                       height = "140px",
+                       style = "margin: 0 8px; cursor: pointer; border: none; background: none; box-shadow: none;"
+                     ),
+                     style = "background: none; border: none; padding: 0;",
+                     class = "no-outline"
+                   ),
+                   # old version
+                   # actionButton("open_task_modal", "Choose task",width = "100%",nicon = icon("list")),
+                   
+                   br(),br(),
                    textOutput("selected_sub"),br(),
                    # for running another task after 1st task ran
                    uiOutput("task_complete_ui")
-                   )
+                   ) # end of div
                  ), # end of side panel
+               
                mainPanel(
                  tabsetPanel(id = "tab_menu",
 
@@ -34,52 +48,69 @@ ui <- fluidPage(
                             fluidRow(
 
                               # GitHub link button
-                              tags$a(
-                                href = "https://github.com/tgilbert14/VGSLite",
-                                target = "_blank",
-                                tags$img(src = "GitHub-Mark.png",
-                                  height = "40px",
-                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
-                                ),
+                              column(width = 1,
+                                     div(
+                                       title = "Link to GitHub repository",
+                                       tags$a(
+                                         href = "https://github.com/tgilbert14/VGSLite",
+                                         target = "_blank",
+                                         tags$img(src = "GitHub-Mark.png",
+                                                  height = "60px",
+                                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
+                                         ))
+                                     ),
                               
                               # download button
-                              tags$a(
-                                id = "download_db",
-                                href = "download_db",
-                                class = "shiny-download-link",
-                                target = "_blank",
-                                download = NA,
-                                tags$img(
-                                  src = "icons8-download-96.png",
-                                  height = "40px",
-                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")),
+                              column(width = 1,
+                                     div(
+                                       title = "Download VGS5 database backup",
+                                       tags$a(
+                                         id = "download_db",
+                                         href = "download_db",
+                                         class = "shiny-download-link",
+                                         target = "_blank",
+                                         download = NA,
+                                         tags$img(
+                                           src = "icons8-download-96.png",
+                                           height = "60px",
+                                           style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
+                                       ))
+                                     ),
                               
                               # About button linked to ReadMe
-                              actionButton(
-                                inputId = "open_readme",
-                                label = tags$img(
-                                  src = "icons8-about-104.png",
-                                  height = "32px",
-                                  style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
-                                ),
-                                style = "background: none; border: none; padding: 0;",
-                                class = "no-outline"
-                              )
+                              column(width = 8), # spacer to push About button to the right
+                              column(width = 2,
+                                     div(
+                                       title = "About VGSLite application",
+                                       style = "text-align: right;",
+                                       actionButton(
+                                         inputId = "open_readme",
+                                         label = tags$img(
+                                           src = "icons8-about-104.png",
+                                           height = "60px",
+                                           style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
+                                         ),
+                                         style = "background: none; border: none; padding: 0;",
+                                         class = "no-outline"
+                                       )
+                                     ))
                               
                               ), # end of fluid row
                             
-
                             br(),br(),
                             verbatimTextOutput("distText"),
                             DT::dataTableOutput("dataTable")
                             ), # end main window tab
-                   tabPanel("Task Window", value = "help", br(), 
+                   
+                   tabPanel("Task Window", value = "help", br(),
                             actionButton("open_site_modal_A", "Moving FROM",
                                          icon = icon(	"arrow-left")), br(),
+                            # for printing confirmation outputs
                             textOutput("selected_siteFrom"),
                             textOutput("selected_siteTo"),
                             textOutput("selected_eventTo"),
                             textOutput("selected_results"),
+                            # move events moodals
                             actionButton("open_site_modal_B", "Moving TO",
                                          icon = icon(	"arrow-right")), br(),
                             actionButton("open_event_modal", "Select Event to MOVE",
@@ -87,6 +118,7 @@ ui <- fluidPage(
                             actionButton("open_results_modal", "Confirm Merge",
                                          icon = icon("play"))
                             ) # end help window tab
+                   
                    ) # end of all tabs
                 ) # end of Main Panel
                ) # end of Side Bar layout
@@ -95,6 +127,7 @@ ui <- fluidPage(
 # <-- Server -->
 server <- function(input, output, session) {
   continue_app = TRUE
+  
   # hide initial buttons/elements
   shinyjs::hide("open_site_modal_A")
   shinyjs::hide("open_site_modal_B")
@@ -105,11 +138,6 @@ server <- function(input, output, session) {
   data_site <- reactive({
     dbGetQuery(mydb, "SELECT SiteID, Notes, quote(PK_Site) AS PK_Site FROM Site Order By SiteID")
   })
-  
-  # # GitHub button
-  # observeEvent(input$git, {
-  #   runjs("window.open('https://github.com/tgilbert14/VGSLite', '_blank')")
-  # })
   
   # initial table render
   output$dataTable <- DT::renderDataTable({
@@ -135,7 +163,7 @@ server <- function(input, output, session) {
     subj <- input$subject_choice
     # confirm selection
     output$selected_sub <- renderPrint({
-      cat(paste0("Task: ", subj))
+      cat(paste0("Task Selected: ", subj))
     })
     removeModal()
     
@@ -373,10 +401,22 @@ server <- function(input, output, session) {
     
     ## add Run new task option
     output$task_complete_ui <- renderUI({
-      actionButton("run_another_task", "Run Another Task", icon = icon("redo"))
+      div(
+        title = "Refresh app to run another task",
+        actionButton(
+          inputId = "run_another_task",
+          label = tags$img(
+            src = "icons8-refresh-500.png",
+            height = "240px",
+            style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
+          ),
+          style = "background: none; border: none; padding: 0;",
+          class = "no-outline"
+        )
+      )
     })
     
-  })
+  }) # End of task selection on main view
     
   ## <-- Move Event --> ##
   # SITE FROM (A) -->
@@ -501,7 +541,7 @@ server <- function(input, output, session) {
     shinyjs::show("open_results_modal")
   })
   
-  # <-- RESULTS
+  # <-- RESULTS -->
   # open site selection modal
   observeEvent(input$open_results_modal, {
     moveFrom <- siteA()
@@ -555,7 +595,6 @@ server <- function(input, output, session) {
   
   ## <-- Read me -->
   observeEvent(input$open_readme, {
-    #session$sendCustomMessage(type = "jsCode", list(code = "window.open('https://github.com/tgilbert14/VGSLite#readme', '_blank');"))
     session$sendCustomMessage(type = "jsCode", list(code = "window.open('README.html', '_blank');"))
   })
   
