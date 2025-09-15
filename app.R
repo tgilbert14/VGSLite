@@ -30,23 +30,50 @@ ui <- fluidPage(
                mainPanel(
                  tabsetPanel(id = "tab_menu",
 
-                   tabPanel("Main Window", value = "main", br(),
+                   tabPanel("Overview", value = "main", br(),
                             fluidRow(
-                              actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
-                              downloadButton("download_db", "Database Backup"),
-                              #actionButton("git", "GitHub"),
-                              tags$a(href = "https://github.com/tgilbert14/VGSLite", target = "_blank",
-                                     tags$img(src = "GitHub-Mark.png", 
-                                              height = "40px", style = "margin-top:5px;"))
-                              ),
+
+                              # GitHub link button
+                              tags$a(
+                                href = "https://github.com/tgilbert14/VGSLite",
+                                target = "_blank",
+                                tags$img(src = "GitHub-Mark.png",
+                                  height = "40px",
+                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
+                                ),
+                              
+                              # download button
+                              tags$a(
+                                id = "download_db",
+                                href = "download_db",
+                                class = "shiny-download-link",
+                                target = "_blank",
+                                download = NA,
+                                tags$img(
+                                  src = "icons8-download-96.png",
+                                  height = "40px",
+                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")),
+                              
+                              # About button linked to ReadMe
+                              actionButton(
+                                inputId = "open_readme",
+                                label = tags$img(
+                                  src = "icons8-about-104.png",
+                                  height = "32px",
+                                  style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
+                                ),
+                                style = "background: none; border: none; padding: 0;",
+                                class = "no-outline"
+                              )
+                              
+                              ), # end of fluid row
                             
-                            
-                            #actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
+
                             br(),br(),
                             verbatimTextOutput("distText"),
                             DT::dataTableOutput("dataTable")
                             ), # end main window tab
-                   tabPanel("Help Window", value = "help", br(), 
+                   tabPanel("Task Window", value = "help", br(), 
                             actionButton("open_site_modal_A", "Moving FROM",
                                          icon = icon(	"arrow-left")), br(),
                             textOutput("selected_siteFrom"),
