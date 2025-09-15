@@ -38,6 +38,8 @@ After launching the app:
 
 MIT License --- see `LICENSE.md` for details.
 
+Icons by [Icons8](https://icons8.com/)
+
 ## Contact
 
 For questions or bug reports, reach out to [tsgilbert\@arizona.edu](mailto:tsgilbert@arizona.edu){.email} or open an issue on GitHub.
