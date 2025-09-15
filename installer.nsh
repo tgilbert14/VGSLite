@@ -1,3 +1,5 @@
+##NOT BEING USED
+
 !macro customInstall
   CreateShortCut "$DESKTOP\VGSLite.lnk" "$INSTDIR\VGSLite.exe"
   CreateShortCut "$SMPROGRAMS\VGSLite\VGSLite.lnk" "$INSTDIR\VGSLite.exe"

@@ -58,5 +58,21 @@ npm install --save-dev electron-builder
 #npm run dist
 npm run release
 
+## to update package-lock file, do this first...
+rm package-lock.json
+rm -rf node_modules
+npm install
+
+# package vulnerabilities
+npm audit fix
+npm audit fix --force
+
+npm run release
+
+## other things...
+# not using Git to auto update so dont need GH_TOKEN - can use this instead of release ->
+
+# this builds locally so no push ->
+npm run dist
 
 
