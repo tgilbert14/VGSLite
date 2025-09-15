@@ -1,7 +1,7 @@
 {
   "name": "VGSLite",
-  "version": "1.4.0",
-  "description": "Offline Shiny app for VGS 5 Desktop help.",
+  "version": "1.5.0",
+  "description": "VGSLite - Offline Shiny app for VGS 5 Desktop help.",
   "main": "main.js",
   "author": {
     "name": "Timothy Gilbert",
@@ -34,7 +34,7 @@
   },
   "build": {
     "appId": "com.vgslite.app",
-    "productName": "VGSLite 1.4",
+    "productName": "VGSLite",
     "asar": false,
     "directories": {
       "output": "dist"
@@ -64,9 +64,13 @@
       "oneClick": false,
       "perMachine": true,
       "allowToChangeInstallationDirectory": true,
-      "uninstallDisplayName": "VGSLite 1.4",
+      "uninstallDisplayName": "VGSLite 1.5",
       "createDesktopShortcut": true,
-      "shortcutName": "VGSLite 1.4"
+      "shortcutName": "VGSLite 1.5",
+      "runAfterFinish": true,
+      "installerIcon": "www/assets/VGSLite.ico",
+      "uninstallerIcon": "www/assets/VGSLite.ico",
+      "installerHeaderIcon": "www/assets/VGSLite.ico"
     },
     "linux": {
       "target": [
@@ -105,7 +109,7 @@
   },
   "devDependencies": {
     "babel-preset-stage-0": "^6.24.1",
-    "electron": "36.4.0",
+    "electron": "^36.9.0",
     "electron-builder": "^26.0.12",
     "electron-rebuild": "^3.2.9"
   },

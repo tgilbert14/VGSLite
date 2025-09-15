@@ -3,66 +3,100 @@ const path=require('path');
 const sqlite3=require('sqlite3').verbose();
 const {spawn}=require('child_process');
 const fs=require('fs');
+const http=require('http');
 
-// Generate a dynamic port between 4000–4999
-const port=Math.floor(4000+Math.random()*1000);
-
-// Define ProgramData path for database storage
-const programDataPath=path.join(process.env.PROGRAMDATA,"VGSData");
-const dbPath=path.join(programDataPath,"VGS50.db");
-
-// Ensure ProgramData directory exists
-if(!fs.existsSync(programDataPath)) {
-  fs.mkdirSync(programDataPath,{recursive: true});
-}
-
-// Verify R Portable exists
-let execPath=path.join(app.getAppPath(),"R-Portable","App","R-Portable","bin","Rscript.exe").replace(/\\/g,"/");
-let appPath=path.join(app.getAppPath(),"app.R").replace(/\\/g,"/");
-
-if(!fs.existsSync(execPath)) {
-  console.error(`R Portable not found at ${execPath}. Ensure it's bundled with the app.`);
-  process.exit(1);
-}
-
-// Launch Shiny App
-const childProcess=spawn(execPath,["-e",`shiny::runApp(file.path('${appPath}'), port=${port})`]);
-
-childProcess.stdout.on('data',(data) => {
-  console.log(`Shiny App Output: ${data}`);
-});
-
-childProcess.stderr.on('data',(data) => {
-  console.error(`Error running R Script: ${data}`);
-});
-
-// Connect SQLite database
-let db=new sqlite3.Database(dbPath,(err) => {
-  if(err) {
-    console.error('Error opening database:',err.message);
-  } else {
-    console.log('Connected to SQLite database at:',dbPath);
-  }
-});
-
-// Launch Electron Window
 let mainWindow;
-app.on('ready',() => {
-  mainWindow=new BrowserWindow({width: 1200,height: 800});
-  mainWindow.loadURL(`http://127.0.0.1:${port}/`);
-});
+let rProcess;
 
-app.on('window-all-closed',() => {
-  if(db) {
-    db.close((err) => {
+// Prevent multiple instances
+const gotTheLock=app.requestSingleInstanceLock();
+if(!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance',() => {
+    if(mainWindow) {
+      if(mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+
+  app.on('ready',() => {
+    // Generate dynamic port
+    const port=Math.floor(4000+Math.random()*1000);
+
+    // Paths
+    const programDataPath=path.join(process.env.PROGRAMDATA,"VGSData");
+    const dbPath=path.join(programDataPath,"VGS50.db");
+    const execPath=path.join(app.getAppPath(),"R-Portable","App","R-Portable","bin","Rscript.exe").replace(/\\/g,"/");
+    const appPath=path.join(app.getAppPath(),"app.R").replace(/\\/g,"/");
+
+    // Ensure ProgramData exists
+    if(!fs.existsSync(programDataPath)) {
+      fs.mkdirSync(programDataPath,{recursive: true});
+    }
+
+    // Verify R exists
+    if(!fs.existsSync(execPath)) {
+      console.error(`R Portable not found at ${execPath}`);
+      process.exit(1);
+    }
+
+    // Launch R Shiny
+    rProcess=spawn(execPath,["-e",`shiny::runApp(file.path('${appPath}'), port=${port})`]);
+
+    rProcess.stdout.on('data',(data) => {
+      console.log(`Shiny Output: ${data}`);
+    });
+
+    rProcess.stderr.on('data',(data) => {
+      console.error(`Shiny Error: ${data}`);
+    });
+
+    // Connect SQLite
+    let db=new sqlite3.Database(dbPath,(err) => {
       if(err) {
-        console.error('Error closing database:',err.message);
+        console.error('DB Error:',err.message);
       } else {
-        console.log('SQLite database connection closed.');
+        console.log('Connected to DB at:',dbPath);
       }
     });
-  }
-  if(process.platform!=='darwin') {
-    app.quit();
-  }
-});
+
+    // Wait for shiny app
+    function waitForShiny(port,callback) {
+      const interval=setInterval(() => {
+        http.get(`http://127.0.0.1:${port}/`,(res) => {
+          if(res.statusCode===200) {
+            clearInterval(interval);
+            callback();
+          }
+        }).on('error',() => {
+          // Still waiting...
+        });
+      },500);
+    }
+
+    // Create window
+    waitForShiny(port,() => {
+      console.log('Shiny app is ready.');
+      mainWindow=new BrowserWindow({width: 1200,height: 800});
+      mainWindow.loadURL(`http://127.0.0.1:${port}/`);
+    });
+
+    // kill db connection and R process on exit
+    app.on('before-quit',() => {
+      if(rProcess) rProcess.kill();
+      if(db) {
+        db.close((err) => {
+          if(err) console.error('DB close error:',err.message);
+          else console.log('DB closed.');
+        });
+      }
+    });
+
+    app.on('window-all-closed',() => {
+      if(process.platform!=='darwin') {
+        app.quit();
+      }
+    });
+  });
+}
