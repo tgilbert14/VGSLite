@@ -176,229 +176,26 @@ server <- function(input, output, session) {
     ## <-- Make everything Local ONLY --> ##
     if (input$subject_choice == "Convert database to Local") {
       source("scripts/localOnly.R", local = TRUE)
-      # #continue_app = FALSE
-      # 
-      # # Getting root folders and moving them under Local
-      # rootFolders <- dbGetQuery(mydb, "Select Schema from SyncTracking where Status LIKE '%Complete%'")
-      # locate_pks <- stringr::str_locate_all(rootFolders$Schema, "SelectedSchema")
-      # 
-      # x=1
-      # while (x <= nrow(locate_pks[[1]])) {
-      #   end <- locate_pks[[1]][x]
-      #   
-      #   # change schema for certain situations (VGSOnline server)
-      #   if (is.na(end)) {
-      #     end <- locate_pks[[2]][x]
-      #     rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[2])
-      #   } else {
-      #     # follow normal conversion
-      #     rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[1])
-      #   }
-      #   
-      #   dbExecute(mydb, paste0("Update SiteClass
-      #     Set CK_ParentClass = X'11111111111111111111111111111111' 
-      #     Where PK_SiteClass = ",rootPK))
-      #   x=x+1
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.contactLinks)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Contact Links moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Contact Links found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.sample)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Sample Data moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Sample Data found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.events)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Events moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Events found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.eventGroups)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Event Groups moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Event Groups found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.protocol)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Protocols moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Protocols found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.site)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Sites moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Sites found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.siteClass)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Folders moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Folders found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.siteClassLinks)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Folder Links moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Folder Links found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.inquiryDatum)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Survey Data moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Inquiry Data found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # result <- dbExecute(mydb, updateToLocal.inquiry)
-      # if (result > 0) {
-      #   shinyjs::alert("✅ Surveys moved to local!")
-      # } else {
-      #   shinyjs::alert("⚠️ No Surveys found.")
-      # }
-      # Sys.sleep(0.5)
-      # 
-      # shinyjs::alert("✨ Complete! ☑") 
-      # 
     }
     
     ## <-- Unlock VGS admin features --> ##
     if (input$subject_choice == "Unlock VGS") {
-      #continue_app = FALSE
-      
-      #shinyjs::alert("✨ Complete! ☑") 
-      
+      source("scripts/unlockVGS.R", local = TRUE)
     }
     
     ## <-- Cleaning up orphan data / non-linked data --> ##
     if (input$subject_choice == "Clean Database") {
-      #continue_app = FALSE
-      result <- dbExecute(mydb, clear.orphan.siteClass)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned SiteClassLink orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd SiteClassLinks.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.protocol)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned Protocol orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd Protocols.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.typeList)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned unused Protocols in TypeList!")
-      } else {
-        shinyjs::alert("⚠️ All Protocols in TypeList being used.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.contactLink)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned ContactLink orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd ContactLinks.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.contact)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned unused Contacts!")
-      } else {
-        shinyjs::alert("⚠️ All Contacts being used.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑") 
+      source("scripts/cleanOrphanLinks.R", local = TRUE)
     }
     
-    ## <-- Cleaning up orphan data / non-linked data --> ##
+    ## <-- Deleting everything in unassigned bin --> ##
     if (input$subject_choice == "Delete Unassigned data") {
-      #continue_app = FALSE
-      
-      result <- dbExecute(mydb, clear.unassigned.sample)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned sample data cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned sample data.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.inq)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned inquiry data cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned inquiry data.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.event)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned events cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned events.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.eventGroup)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned inquiry cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned event groups.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.site)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned sites cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned sites.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑")  
+      source("scripts/deleteUnassigned.R", local = TRUE)
     }
     
     ## <-- Cleaning up orphan data / non-linked data --> ##
     if (input$subject_choice == "Empty Tombstone") {
-      #continue_app = FALSE
-      result <- dbExecute(mydb, clear.tombstone)
-      if (result > 0) {
-        shinyjs::alert("✅ Tombstone cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ Tombstone records are empty.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑") 
+      source("scripts/emptyTombstone.R", local = TRUE)
     }
     
     ## add Run new task option
@@ -422,125 +219,39 @@ server <- function(input, output, session) {
     
   ## <-- Move Event --> ##
   # SITE FROM (A) -->
-  # open site selection modal
   observeEvent(input$open_site_modal_A, {
     req(input$subject_choice)
     sites <- data_site()
-
-    if (continue_app == TRUE) {
-      # check for sites
-      if (nrow(sites) == 0) {
-        stop("No Sites Found...")
-      }
-      # make sure correct task is selected
-      if(input$subject_choice == "Move Event") {
-        sitesFound <- sites$SiteID
-      } else {
-        sitesFound <- "Select A Site first"
-      }
-      # pop up for select FROM site
-      showModal(modalDialog(
-        title = "Moving FROM",
-        selectInput("site_choice", "FROM", choices = sitesFound),
-        footer = tagList(
-          modalButton("Cancel"),
-          actionButton("submit_site_from", "OK")
-        ),
-        easyClose = TRUE
-      ))
-    }
+    source("scripts/moveEvent/fromPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_site_from, {
     siteFrom <- input$site_choice
     sites <- data_site()
-    # save siteA
-    siteA(sites[sites$SiteID == siteFrom, ])
-    # confirm selection
-    output$selected_siteFrom <- renderPrint({
-      cat(paste0("Move Event from: ", siteFrom))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_site_modal_A")
-    shinyjs::show("open_site_modal_B")
+    source("scripts/moveEvent/fromConfirm.R", local = TRUE)
   })
   
   # SITE TO (B) -->
   observeEvent(input$open_site_modal_B, {
     req(input$subject_choice)
     sites <- data_site()
-    
-    # get rid of site selected 'from'
-    sitesFound <- sites$SiteID
-    sitesFound <- sitesFound[sitesFound != input$site_choice]
-    # pop up for select To site
-    showModal(modalDialog(
-      title = "Moving TO",
-      selectInput("site_choice_2", "TO", choices = sitesFound),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_site_to", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/toPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_site_to, {
     siteTo <- input$site_choice_2
     sites <- data_site()
-    # save siteB
-    siteB(sites[sites$SiteID == siteTo, ])
-    # confirm selection
-    output$selected_siteTo <- renderPrint({
-      cat(paste0("Move Event to: ", siteTo))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_site_modal_B")
-    shinyjs::show("open_event_modal")
+    source("scripts/moveEvent/toConfirm.R", local = TRUE)
   })
   
   # EVENT TO MOVE (FROM A TO B) -->
   observeEvent(input$open_event_modal, {
     req(input$subject_choice)
     siteInfo <- siteA()
-    
-    # get events
-    site_q <- paste0(
-      "SELECT Protocol.Date AS Date FROM Protocol
-          INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
-          INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-          INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-          WHERE Site.PK_Site = ", siteInfo$PK_Site, "
-          Order By Protocol.Date DESC, Protocol.ProtocolName"
-    )
-    
-    event_info <- DBI::dbGetQuery(mydb, site_q)
-    eventInfo(event_info)
-    # pop up for select events from site A
-    showModal(modalDialog(
-      title = paste0("Moving Event"),
-      selectInput("event_choice", "Move", choices = event_info$Date),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_event", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/gettingEvents.R", local = TRUE)
   })
   observeEvent(input$submit_event, {
     dateTo <- input$event_choice
     info <- eventInfo()
-
-    # save event info
-    eventDate(info[info$Date == dateTo, ])
-    # confirm selection
-    output$selected_eventTo <- renderPrint({
-      cat(paste0("Moving Event: ",substr(dateTo,1,10)))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_event_modal")
-    shinyjs::show("open_results_modal")
+    source("scripts/moveEvent/confirmEventCheck.R", local = TRUE)
   })
   
   # <-- RESULTS -->
@@ -550,49 +261,14 @@ server <- function(input, output, session) {
     moveTo <- siteB()
     onDate_saved <- eventDate()
     onDate <- unique(onDate_saved)
-    
-    # pop up for select FROM site
-    showModal(modalDialog(
-      title = "Check Selections",
-      selectInput("confirm_choice", "Confirm", 
-                  choices = paste0("Move '",moveFrom$SiteID,"' to '",moveTo$SiteID,
-                                   "' for ",substr(onDate,1,10),"?")),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_confirm", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/confirmEventPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_confirm, {
     confirmTo <- input$confirm_choice
     moveFrom <- siteA()
     moveTo <- siteB()
     onDate <- unique(eventDate())
-    
-    # merge event to new site
-    merge_q <- paste0("Update Event
-                          SET FK_Site = ",moveTo$PK_Site,", SyncKey = SyncKey + 1
-                          Where PK_Event IN (
-                            Select PK_Event from Protocol
-                            INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol  
-                            INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-                            INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-                            where PK_Site = ",moveFrom$PK_Site,"
-                            and Date Like '%",onDate,"%')")
-    
-    r <- DBI::dbExecute(mydb, merge_q)
-    
-    # confirm selection
-    output$selected_results <- renderPrint({
-      if (r > 0) {
-        cat("Success!")
-      } else {
-        cat("Something went wrong, please check you database or try again.")
-      }
-    })
-    removeModal()
-    shinyjs::hide("open_results_modal")
+    source("scripts/moveEvent/moveEvent.R", local = TRUE)
   })
   
   ## <-- Read me -->
@@ -602,24 +278,7 @@ server <- function(input, output, session) {
   
   ## <--  Run another task/refresh app button -->
   observeEvent(input$run_another_task, {
-    # Reset reactive values
-    siteA(NULL)
-    siteB(NULL)
-    eventInfo(NULL)
-    eventDate(NULL) 
-    
-    shinyjs::show("open_task_modal")
-    shinyjs::hide("run_another_task")
-
-    # Reset tab
-    updateTabsetPanel(session, "tab_menu", selected = "main")
-    
-    # Clear outputs
-    output$selected_sub <- renderPrint({"Select new task to run"})
-    output$selected_siteFrom <- renderPrint({"Select new task attributes"})
-    output$selected_siteTo <- renderPrint({"Select new task attributes"})
-    output$selected_eventTo <- renderPrint({"Select new task attributes"})
-    output$selected_results <- renderPrint({"Select new task attributes"})
+    source("scripts/refreshTask.R", local = TRUE)
   })
   
   ## <-- download button -->
@@ -636,7 +295,6 @@ server <- function(input, output, session) {
     },
     contentType = "application/octet-stream"
   )
-  
   
   # disconnect database on session end
   session$onSessionEnded(function() {
