@@ -1,4 +1,4 @@
-# ![VGSLite](www/assets/VGSLite.png)
+# ![VGSLite](www/assets/VGSLite2.png)
 
 **VGSLite** is a R based helper application built to support VGS 5 Desktop on Windows devices.
 
