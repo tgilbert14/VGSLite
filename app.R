@@ -1,4 +1,5 @@
 
+
 # Get app path
 app_path <- getwd()
 
@@ -8,58 +9,123 @@ ui <- fluidPage(
   useToastr(),
   useShinyjs(),
   theme = shinytheme("flatly"),
+  #theme = shinytheme("journal"),
+      
   # for Read me link
   tags$script('Shiny.addCustomMessageHandler("jsCode", function(message) {
   eval(message.code); });'),
   
-  # titlePanel(""),
-             
              sidebarLayout(
                sidebarPanel(
                  div(
-                   style = "text-align: center; margin-top: 10px;",
-                   tags$img(src = "assets/VGSLite.png", width = "220px", style = "margin-bottom:20px;"),
+                   style = "text-align: center; margin-top: 10px; background-color: seagreen;",
+                   tags$img(src = "assets/VGSLite2.png", width = "360px", style = "margin-bottom:30px;"),
+                   
                    # choose task
-                   actionButton("open_task_modal", "Choose task",width = "100%",
-                                icon = icon("list")),br(),br(),
+                   actionButton(
+                     title = "Select task to run",
+                     inputId = "open_task_modal",
+                     label = tags$img(
+                       src = "icons8-plus-144.png",
+                       height = "140px",
+                       style = "margin: 0 8px; cursor: pointer; border: none; background: none; box-shadow: none;"
+                     ),
+                     style = "background: none; border: none; padding: 0;",
+                     class = "no-outline"
+                   ),
+                   # old version
+                   # actionButton("open_task_modal", "Choose task",width = "100%",nicon = icon("list")),
+                   
+                   br(),br(),
                    textOutput("selected_sub"),br(),
                    # for running another task after 1st task ran
                    uiOutput("task_complete_ui")
-                   )
+                   ) # end of div
                  ), # end of side panel
+               
                mainPanel(
                  tabsetPanel(id = "tab_menu",
 
-                   tabPanel("Main Window", value = "main", br(),
+                   tabPanel("Overview", value = "main", br(),
                             fluidRow(
-                              actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
-                              downloadButton("download_db", "Database Backup"),
-                              #actionButton("git", "GitHub"),
-                              tags$a(href = "https://github.com/tgilbert14/VGSLite", target = "_blank",
-                                     tags$img(src = "GitHub-Mark.png", 
-                                              height = "40px", style = "margin-top:5px;"))
-                              ),
+
+                              # GitHub link button
+                              column(width = 1,
+                                     div(
+                                       title = "Link to GitHub repository",
+                                       tags$a(
+                                         href = "https://github.com/tgilbert14/VGSLite",
+                                         target = "_blank",
+                                         tags$img(src = "GitHub-Mark.png",
+                                                  height = "60px",
+                                                  style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
+                                         ))
+                                     ),
+                              
+                              # download button
+                              column(width = 1,
+                                     div(
+                                       title = "Download VGS5 database backup",
+                                       tags$a(
+                                         id = "download_db",
+                                         href = "download_db",
+                                         class = "shiny-download-link",
+                                         target = "_blank",
+                                         download = NA,
+                                         tags$img(
+                                           src = "icons8-download-96.png",
+                                           height = "60px",
+                                           style = "margin: 0 4px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;")
+                                       ))
+                                     ),
+                              
+                              # About button linked to ReadMe
+                              column(width = 8), # spacer to push About button to the right
+                              column(width = 2,
+                                     div(
+                                       title = "About VGSLite application",
+                                       style = "text-align: right;",
+                                       actionButton(
+                                         inputId = "open_readme",
+                                         label = tags$img(
+                                           src = "icons8-about-104.png",
+                                           height = "60px",
+                                           style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
+                                         ),
+                                         style = "background: none; border: none; padding: 0;",
+                                         class = "no-outline"
+                                       )
+                                     ))
+                              
+                              ), # end of fluid row
                             
-                            
-                            #actionButton("open_readme", "About", icon = icon("book"), width = "100px"),
                             br(),br(),
                             verbatimTextOutput("distText"),
-                            DT::dataTableOutput("dataTable")
+                            DT::dataTableOutput("dataTable",width = "80%")
                             ), # end main window tab
-                   tabPanel("Help Window", value = "help", br(), 
-                            actionButton("open_site_modal_A", "Moving FROM",
+                   
+                   tabPanel("Task Window", value = "help", br(),
+                            actionButton("open_site_modal_A", "FROM",
                                          icon = icon(	"arrow-left")), br(),
+                            # for printing confirmation outputs
                             textOutput("selected_siteFrom"),
                             textOutput("selected_siteTo"),
                             textOutput("selected_eventTo"),
                             textOutput("selected_results"),
-                            actionButton("open_site_modal_B", "Moving TO",
+                            # move events modals
+                            actionButton("open_site_modal_B", "TO",
                                          icon = icon(	"arrow-right")), br(),
                             actionButton("open_event_modal", "Select Event to MOVE",
                                          icon = icon("exchange-alt")), br(),
                             actionButton("open_results_modal", "Confirm Merge",
+                                         icon = icon("play")),
+                            # update species modals
+                            actionButton("open_sp_modal_B", "TO",
+                                         icon = icon(	"arrow-right")), br(),
+                            actionButton("open_sp_modal", "Confirm Update",
                                          icon = icon("play"))
                             ) # end help window tab
+                   
                    ) # end of all tabs
                 ) # end of Main Panel
                ) # end of Side Bar layout
@@ -67,22 +133,24 @@ ui <- fluidPage(
 
 # <-- Server -->
 server <- function(input, output, session) {
+  # re-establish connection after refresh button hit
+  source("R/connectingToVGS50.R", local = TRUE)
+  
   continue_app = TRUE
+  
   # hide initial buttons/elements
   shinyjs::hide("open_site_modal_A")
   shinyjs::hide("open_site_modal_B")
   shinyjs::hide("open_event_modal")
   shinyjs::hide("open_results_modal")
+  shinyjs::hide("open_site_sp_B")
+  shinyjs::hide("open_sp_modal")
+  shinyjs::hide("open_sp_modal_B")
   
   # get data
   data_site <- reactive({
     dbGetQuery(mydb, "SELECT SiteID, Notes, quote(PK_Site) AS PK_Site FROM Site Order By SiteID")
   })
-  
-  # # GitHub button
-  # observeEvent(input$git, {
-  #   runjs("window.open('https://github.com/tgilbert14/VGSLite', '_blank')")
-  # })
   
   # initial table render
   output$dataTable <- DT::renderDataTable({
@@ -97,461 +165,184 @@ server <- function(input, output, session) {
   eventInfo <- reactiveVal()
   eventDate <- reactiveVal() 
   
+  # define reactive values for updating species
+  speciesA <- reactiveVal()
+  speciesB <- reactiveVal()
+  speciesInfo <- reactiveVal()
+  speciesUpdateQurey <- reactiveVal()
+  
   # <-- Task Selection ->
   observeEvent(input$open_task_modal, {
     source("scripts/selectTask.R")
   })
   observeEvent(input$submit_subject, {
     shinyjs::hide("open_task_modal")
-    shinyjs::show("open_site_modal_A")
     
     subj <- input$subject_choice
     # confirm selection
     output$selected_sub <- renderPrint({
-      cat(paste0("Task: ", subj))
+      cat(paste0("Task Selected: ", subj))
     })
     removeModal()
     
+    # Move to help window tab for multi-step tasks
     if (input$subject_choice == "Move Event") {
-      # move to next tab ->
+      updateTabsetPanel(session, "tab_menu", selected = "help")
+      shinyjs::show("open_site_modal_A")
+    }
+    if (input$subject_choice == "Update Species for Frequency") {
       updateTabsetPanel(session, "tab_menu", selected = "help")
     }
 
     ## <-- Make everything Local ONLY --> ##
     if (input$subject_choice == "Convert database to Local") {
-      #continue_app = FALSE
-      
-      # Getting root folders and moving them under Local
-      rootFolders <- dbGetQuery(mydb, "Select Schema from SyncTracking where Status LIKE '%Complete%'")
-      locate_pks <- stringr::str_locate_all(rootFolders$Schema, "SelectedSchema")
-     
-      x=1
-      while (x <= nrow(locate_pks[[1]])) {
-        end <- locate_pks[[1]][x]
-        
-        # change schema for certain situations (VGSOnline server)
-        if (is.na(end)) {
-          end <- locate_pks[[2]][x]
-          rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[2])
-        } else {
-          # follow normal conversion
-          rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[1])
-        }
-        
-        dbExecute(mydb, paste0("Update SiteClass
-          Set CK_ParentClass = X'11111111111111111111111111111111' 
-          Where PK_SiteClass = ",rootPK))
-        x=x+1
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.contactLinks)
-      if (result > 0) {
-        shinyjs::alert("✅ Contact Links moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Contact Links found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.sample)
-      if (result > 0) {
-        shinyjs::alert("✅ Sample Data moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Sample Data found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.events)
-      if (result > 0) {
-        shinyjs::alert("✅ Events moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Events found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.eventGroups)
-      if (result > 0) {
-        shinyjs::alert("✅ Event Groups moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Event Groups found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.protocol)
-      if (result > 0) {
-        shinyjs::alert("✅ Protocols moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Protocols found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.site)
-      if (result > 0) {
-        shinyjs::alert("✅ Sites moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Sites found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.siteClass)
-      if (result > 0) {
-        shinyjs::alert("✅ Folders moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Folders found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.siteClassLinks)
-      if (result > 0) {
-        shinyjs::alert("✅ Folder Links moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Folder Links found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.inquiryDatum)
-      if (result > 0) {
-        shinyjs::alert("✅ Survey Data moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Inquiry Data found.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, updateToLocal.inquiry)
-      if (result > 0) {
-        shinyjs::alert("✅ Surveys moved to local!")
-      } else {
-        shinyjs::alert("⚠️ No Surveys found.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑") 
-      
+      source("scripts/localOnly.R", local = TRUE)
     }
     
     ## <-- Unlock VGS admin features --> ##
     if (input$subject_choice == "Unlock VGS") {
-      #continue_app = FALSE
-      
-      #shinyjs::alert("✨ Complete! ☑") 
-      
+      source("scripts/unlockVGS.R", local = TRUE)
     }
     
     ## <-- Cleaning up orphan data / non-linked data --> ##
     if (input$subject_choice == "Clean Database") {
-      #continue_app = FALSE
-      result <- dbExecute(mydb, clear.orphan.siteClass)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned SiteClassLink orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd SiteClassLinks.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.protocol)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned Protocol orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd Protocols.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.typeList)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned unused Protocols in TypeList!")
-      } else {
-        shinyjs::alert("⚠️ All Protocols in TypeList being used.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.contactLink)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned ContactLink orphans!")
-      } else {
-        shinyjs::alert("⚠️ No orphan'd ContactLinks.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.orphan.contact)
-      if (result > 0) {
-        shinyjs::alert("✅ Cleaned unused Contacts!")
-      } else {
-        shinyjs::alert("⚠️ All Contacts being used.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑") 
+      source("scripts/cleanOrphanLinks.R", local = TRUE)
     }
     
-    ## <-- Cleaning up orphan data / non-linked data --> ##
+    ## <-- Deleting everything in unassigned bin --> ##
     if (input$subject_choice == "Delete Unassigned data") {
-      #continue_app = FALSE
-      
-      result <- dbExecute(mydb, clear.unassigned.sample)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned sample data cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned sample data.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.inq)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned inquiry data cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned inquiry data.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.event)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned events cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned events.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.eventGroup)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned inquiry cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned event groups.")
-      }
-      Sys.sleep(0.5)
-      
-      result <- dbExecute(mydb, clear.unassigned.site)
-      if (result > 0) {
-        shinyjs::alert("✅ Unassigned sites cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ No unassigned sites.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑")  
+      source("scripts/deleteUnassigned.R", local = TRUE)
     }
     
-    ## <-- Cleaning up orphan data / non-linked data --> ##
+    ## <-- Clear Deletion cache --> ##
     if (input$subject_choice == "Empty Tombstone") {
-      #continue_app = FALSE
-      result <- dbExecute(mydb, clear.tombstone)
-      if (result > 0) {
-        shinyjs::alert("✅ Tombstone cleared successfully!")
-      } else {
-        shinyjs::alert("⚠️ Tombstone records are empty.")
-      }
-      Sys.sleep(0.5)
-      
-      shinyjs::alert("✨ Complete! ☑") 
+      source("scripts/emptyTombstone.R", local = TRUE)
     }
     
-    ## add Run new task option
-    output$task_complete_ui <- renderUI({
-      actionButton("run_another_task", "Run Another Task", icon = icon("redo"))
+    ## <-- Update species --> ##
+    # SPECIES (A) -->
+    if (input$subject_choice == "Update Species for Frequency") {
+      source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
+    }
+    observeEvent(input$submit_sp_update, {
+      speciesFrom <- input$sp_choice
+      source("scripts/updateSpecies/updateSpeciesA_confirm.R", local = TRUE)
     })
     
-  })
+    # SPECIES TO (B) -->
+    observeEvent(input$open_sp_modal_B, {
+      req(input$sp_choice)
+      source("scripts/updateSpecies/updateSpeciesB.R", local = TRUE)
+    })
+    observeEvent(input$submit_sp_update_to, {
+      speciesTo <- input$sp_choice_2
+      source("scripts/updateSpecies/updateSpeciesB_confirm.R", local = TRUE)
+    })
+    observeEvent(input$submit_new_species, {
+      newSp <- input$new_fk_species
+      newSpQualifier <- input$new_qualifier
+      source("scripts/updateSpecies/updateNewSpecies.R", local = TRUE)
+    })
+    
+    # UPDATE SPECIES CHECK (A TO B) -->
+    observeEvent(input$open_sp_modal, {
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/confirmSpeciesUpdate.R", local = TRUE)
+    })
+    observeEvent(input$confirm_choice_sp, {
+      confirmTo <- input$confirm_choice_sp
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/processSpeciesUpdate.R", local = TRUE)
+    })
+    observeEvent(input$submit_check, {
+      update_speciesQ <- speciesUpdateQurey()
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/overrideCheck.R", local = TRUE)
+    })
+    
+    ## <-- REFRESH tasks button -->
+    output$task_complete_ui <- renderUI({
+      div(
+        title = "Refresh app to run another task",
+        actionButton(
+          inputId = "run_another_task",
+          label = tags$img(
+            src = "icons8-refresh-500.png",
+            height = "240px",
+            style = "margin: 0 8px; margin-top:5px; cursor: pointer; border: none; background: none; box-shadow: none;"
+          ),
+          style = "background: none; border: none; padding: 0;",
+          class = "no-outline"
+        )
+      )
+    })
+    
+  }) # End of task selection on main view
     
   ## <-- Move Event --> ##
   # SITE FROM (A) -->
-  # open site selection modal
   observeEvent(input$open_site_modal_A, {
     req(input$subject_choice)
     sites <- data_site()
-
-    if (continue_app == TRUE) {
-      # check for sites
-      if (nrow(sites) == 0) {
-        stop("No Sites Found...")
-      }
-      # make sure correct task is selected
-      if(input$subject_choice == "Move Event") {
-        sitesFound <- sites$SiteID
-      } else {
-        sitesFound <- "Select A Site first"
-      }
-      # pop up for select FROM site
-      showModal(modalDialog(
-        title = "Moving FROM",
-        selectInput("site_choice", "FROM", choices = sitesFound),
-        footer = tagList(
-          modalButton("Cancel"),
-          actionButton("submit_site_from", "OK")
-        ),
-        easyClose = TRUE
-      ))
-    }
+    source("scripts/moveEvent/fromPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_site_from, {
     siteFrom <- input$site_choice
     sites <- data_site()
-    # save siteA
-    siteA(sites[sites$SiteID == siteFrom, ])
-    # confirm selection
-    output$selected_siteFrom <- renderPrint({
-      cat(paste0("Move Event from: ", siteFrom))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_site_modal_A")
-    shinyjs::show("open_site_modal_B")
+    source("scripts/moveEvent/fromConfirm.R", local = TRUE)
   })
   
   # SITE TO (B) -->
   observeEvent(input$open_site_modal_B, {
     req(input$subject_choice)
     sites <- data_site()
-    
-    # get rid of site selected 'from'
-    sitesFound <- sites$SiteID
-    sitesFound <- sitesFound[sitesFound != input$site_choice]
-    # pop up for select To site
-    showModal(modalDialog(
-      title = "Moving TO",
-      selectInput("site_choice_2", "TO", choices = sitesFound),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_site_to", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/toPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_site_to, {
     siteTo <- input$site_choice_2
     sites <- data_site()
-    # save siteB
-    siteB(sites[sites$SiteID == siteTo, ])
-    # confirm selection
-    output$selected_siteTo <- renderPrint({
-      cat(paste0("Move Event to: ", siteTo))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_site_modal_B")
-    shinyjs::show("open_event_modal")
+    source("scripts/moveEvent/toConfirm.R", local = TRUE)
   })
   
   # EVENT TO MOVE (FROM A TO B) -->
   observeEvent(input$open_event_modal, {
     req(input$subject_choice)
     siteInfo <- siteA()
-    
-    # get events
-    site_q <- paste0(
-      "SELECT Protocol.Date AS Date FROM Protocol
-          INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
-          INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-          INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-          WHERE Site.PK_Site = ", siteInfo$PK_Site, "
-          Order By Protocol.Date DESC, Protocol.ProtocolName"
-    )
-    
-    event_info <- DBI::dbGetQuery(mydb, site_q)
-    eventInfo(event_info)
-    # pop up for select events from site A
-    showModal(modalDialog(
-      title = paste0("Moving Event"),
-      selectInput("event_choice", "Move", choices = event_info$Date),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_event", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/gettingEvents.R", local = TRUE)
   })
   observeEvent(input$submit_event, {
     dateTo <- input$event_choice
     info <- eventInfo()
-
-    # save event info
-    eventDate(info[info$Date == dateTo, ])
-    # confirm selection
-    output$selected_eventTo <- renderPrint({
-      cat(paste0("Moving Event: ",substr(dateTo,1,10)))
-    })
-    removeModal()
-    # hide old selection and add new site B selection
-    shinyjs::hide("open_event_modal")
-    shinyjs::show("open_results_modal")
+    source("scripts/moveEvent/confirmEventCheck.R", local = TRUE)
   })
   
-  # <-- RESULTS
-  # open site selection modal
+  # <-- RESULTS -->
   observeEvent(input$open_results_modal, {
     moveFrom <- siteA()
     moveTo <- siteB()
     onDate_saved <- eventDate()
     onDate <- unique(onDate_saved)
-    
-    # pop up for select FROM site
-    showModal(modalDialog(
-      title = "Check Selections",
-      selectInput("confirm_choice", "Confirm", 
-                  choices = paste0("Move '",moveFrom$SiteID,"' to '",moveTo$SiteID,
-                                   "' for ",substr(onDate,1,10),"?")),
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("submit_confirm", "OK")
-      ),
-      easyClose = TRUE
-    ))
+    source("scripts/moveEvent/confirmEventPopUp.R", local = TRUE)
   })
   observeEvent(input$submit_confirm, {
     confirmTo <- input$confirm_choice
     moveFrom <- siteA()
     moveTo <- siteB()
     onDate <- unique(eventDate())
-    
-    # merge event to new site
-    merge_q <- paste0("Update Event
-                          SET FK_Site = ",moveTo$PK_Site,", SyncKey = SyncKey + 1
-                          Where PK_Event IN (
-                            Select PK_Event from Protocol
-                            INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol  
-                            INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-                            INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-                            where PK_Site = ",moveFrom$PK_Site,"
-                            and Date Like '%",onDate,"%')")
-    
-    r <- DBI::dbExecute(mydb, merge_q)
-    
-    # confirm selection
-    output$selected_results <- renderPrint({
-      if (r > 0) {
-        cat("Success!")
-      } else {
-        cat("Something went wrong, please check you database or try again.")
-      }
-    })
-    removeModal()
-    shinyjs::hide("open_results_modal")
+    source("scripts/moveEvent/moveEvent.R", local = TRUE)
   })
   
   ## <-- Read me -->
   observeEvent(input$open_readme, {
-    #session$sendCustomMessage(type = "jsCode", list(code = "window.open('https://github.com/tgilbert14/VGSLite#readme', '_blank');"))
     session$sendCustomMessage(type = "jsCode", list(code = "window.open('README.html', '_blank');"))
   })
   
   ## <--  Run another task/refresh app button -->
   observeEvent(input$run_another_task, {
-    # Reset reactive values
-    siteA(NULL)
-    siteB(NULL)
-    eventInfo(NULL)
-    eventDate(NULL) 
-    
-    shinyjs::show("open_task_modal")
-    shinyjs::hide("run_another_task")
-
-    # Reset tab
-    updateTabsetPanel(session, "tab_menu", selected = "main")
-    
-    # Clear outputs
-    output$selected_sub <- renderPrint({"Select new task to run"})
-    output$selected_siteFrom <- renderPrint({"Select new task attributes"})
-    output$selected_siteTo <- renderPrint({"Select new task attributes"})
-    output$selected_eventTo <- renderPrint({"Select new task attributes"})
-    output$selected_results <- renderPrint({"Select new task attributes"})
+    source("scripts/refreshTask.R", local = TRUE)
   })
   
   ## <-- download button -->
@@ -568,7 +359,6 @@ server <- function(input, output, session) {
     },
     contentType = "application/octet-stream"
   )
-  
   
   # disconnect database on session end
   session$onSessionEnded(function() {

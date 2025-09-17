@@ -1,4 +1,4 @@
-# ![VGSLite](www/assets/VGSLite.png)
+# ![VGSLite](www/assets/VGSLite2.png)
 
 **VGSLite** is a R based helper application built to support VGS 5 Desktop on Windows devices.
 
@@ -6,7 +6,7 @@
 
 To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows device:
 
-1.  Download the latest release from [VGSLite](https://github.com/tgilbert14/VGSLite/releases/tag/VGSLite).
+1.  Download the latest release from [VGSLite](https://github.com/tgilbert14/VGSLite/releases/tag/v2.0).
 2.  Unzip the folder and run the latest `VGSLite Setup.exe`.
 3.  You may have to click "more info" in order to install the application.
 
@@ -37,6 +37,8 @@ After launching the app:
 ## License
 
 MIT License --- see `LICENSE.md` for details.
+
+Icons by [Icons8](https://icons8.com/)
 
 ## Contact
 
