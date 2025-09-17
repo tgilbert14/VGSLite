@@ -50,7 +50,8 @@ inner join event on event.pk_event = sample.FK_Event
 inner join site on site.PK_site = event.FK_Site
 inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
 inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
-                  Where FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from)
+                  Where FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
+                  order by SiteID, Protocol.Date, Transect, SampleNumber")
 
 where_updates_would_occur <- DBI::dbGetQuery(mydb, update_check_q)
 
@@ -60,7 +61,8 @@ inner join event on event.pk_event = sample.FK_Event
 inner join site on site.PK_site = event.FK_Site
 inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
 inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
-                  Where FK_Species = '",fk_species_to,"' and speciesQualifier ",qualifier_to)
+                  Where FK_Species = '",fk_species_to,"' and speciesQualifier ",qualifier_to," 
+                  order by SiteID, Protocol.Date, Transect, SampleNumber")
 
 where_species_is_already <- DBI::dbGetQuery(mydb, update_check_q2)
 
@@ -70,12 +72,13 @@ rows_sp2 <- apply(where_species_is_already, 1, paste, collapse = "|")
 common_rows <- intersect(rows_sp1, rows_sp2)
 matched_rows <- where_updates_would_occur[rows_sp1 %in% common_rows, ]
 
+
 if (nrow(matched_rows)>0) {
   showModal(modalDialog(
     title = "⚠️ Species Update Blocked",
     tags$div(
       style = "color: darkred; font-weight: bold; margin-bottom: 10px;",
-      "This update would create duplicate species entries in the same Transect / SampleNumber / Site / Date combination which will have to be corrected later."
+      paste0("This update would create duplicate species entries for ",nrow(matched_rows)," samples which will need to be corrected later.")
     ),
     tags$div(
       style = "margin-bottom: 10px;",
