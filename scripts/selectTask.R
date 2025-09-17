@@ -4,11 +4,12 @@ showModal(modalDialog(
   title = "Select Task to Run in VGS 5 Desktop",
   selectInput("subject_choice", "Tasks",
               choices = c("Clean Database",
-                          "Clean Species",
+                          #"Clean Species Up",
                           "Convert database to Local",
                           "Delete Unassigned data",
                           "Empty Tombstone",
-                          "Move Event"#,
+                          "Move Event",
+                          "Update Species for Frequency"#,
                           #"Unlock VGS"
                           )),
   footer = tagList(

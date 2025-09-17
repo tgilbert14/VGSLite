@@ -1,6 +1,10 @@
+# sync Key update ->
+max_SyncKey <- paste0("select Max(SyncKey) from event")
+SyncKey <- DBI::dbGetQuery(mydb, max_SyncKey)
+
 # merge event to new site
 merge_q <- paste0("Update Event
-                          SET FK_Site = ",moveTo$PK_Site,", SyncKey = SyncKey + 1
+                          SET FK_Site = ",moveTo$PK_Site,", SyncKey = ",SyncKey," 
                           Where PK_Event IN (
                             Select PK_Event from Protocol
                             INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol  

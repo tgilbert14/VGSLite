@@ -1,4 +1,5 @@
 
+
 # Get app path
 app_path <- getwd()
 
@@ -18,7 +19,7 @@ ui <- fluidPage(
                sidebarPanel(
                  div(
                    style = "text-align: center; margin-top: 10px; background-color: seagreen;",
-                   tags$img(src = "assets/VGSLite.png", width = "360px", style = "margin-bottom:30px;"),
+                   tags$img(src = "assets/VGSLite2.png", width = "360px", style = "margin-bottom:30px;"),
                    
                    # choose task
                    actionButton(
@@ -104,19 +105,24 @@ ui <- fluidPage(
                             ), # end main window tab
                    
                    tabPanel("Task Window", value = "help", br(),
-                            actionButton("open_site_modal_A", "Moving FROM",
+                            actionButton("open_site_modal_A", "FROM",
                                          icon = icon(	"arrow-left")), br(),
                             # for printing confirmation outputs
                             textOutput("selected_siteFrom"),
                             textOutput("selected_siteTo"),
                             textOutput("selected_eventTo"),
                             textOutput("selected_results"),
-                            # move events moodals
-                            actionButton("open_site_modal_B", "Moving TO",
+                            # move events modals
+                            actionButton("open_site_modal_B", "TO",
                                          icon = icon(	"arrow-right")), br(),
                             actionButton("open_event_modal", "Select Event to MOVE",
                                          icon = icon("exchange-alt")), br(),
                             actionButton("open_results_modal", "Confirm Merge",
+                                         icon = icon("play")),
+                            # update species modals
+                            actionButton("open_sp_modal_B", "TO",
+                                         icon = icon(	"arrow-right")), br(),
+                            actionButton("open_sp_modal", "Confirm Update",
                                          icon = icon("play"))
                             ) # end help window tab
                    
@@ -127,6 +133,9 @@ ui <- fluidPage(
 
 # <-- Server -->
 server <- function(input, output, session) {
+  # re-establish connection after refresh button hit
+  source("R/connectingToVGS50.R", local = TRUE)
+  
   continue_app = TRUE
   
   # hide initial buttons/elements
@@ -134,6 +143,9 @@ server <- function(input, output, session) {
   shinyjs::hide("open_site_modal_B")
   shinyjs::hide("open_event_modal")
   shinyjs::hide("open_results_modal")
+  shinyjs::hide("open_site_sp_B")
+  shinyjs::hide("open_sp_modal")
+  shinyjs::hide("open_sp_modal_B")
   
   # get data
   data_site <- reactive({
@@ -153,13 +165,18 @@ server <- function(input, output, session) {
   eventInfo <- reactiveVal()
   eventDate <- reactiveVal() 
   
+  # define reactive values for updating species
+  speciesA <- reactiveVal()
+  speciesB <- reactiveVal()
+  speciesInfo <- reactiveVal()
+  speciesUpdateQurey <- reactiveVal()
+  
   # <-- Task Selection ->
   observeEvent(input$open_task_modal, {
     source("scripts/selectTask.R")
   })
   observeEvent(input$submit_subject, {
     shinyjs::hide("open_task_modal")
-    shinyjs::show("open_site_modal_A")
     
     subj <- input$subject_choice
     # confirm selection
@@ -168,8 +185,12 @@ server <- function(input, output, session) {
     })
     removeModal()
     
+    # Move to help window tab for multi-step tasks
     if (input$subject_choice == "Move Event") {
-      # move to next tab ->
+      updateTabsetPanel(session, "tab_menu", selected = "help")
+      shinyjs::show("open_site_modal_A")
+    }
+    if (input$subject_choice == "Update Species for Frequency") {
       updateTabsetPanel(session, "tab_menu", selected = "help")
     }
 
@@ -193,12 +214,56 @@ server <- function(input, output, session) {
       source("scripts/deleteUnassigned.R", local = TRUE)
     }
     
-    ## <-- Cleaning up orphan data / non-linked data --> ##
+    ## <-- Clear Deletion cache --> ##
     if (input$subject_choice == "Empty Tombstone") {
       source("scripts/emptyTombstone.R", local = TRUE)
     }
     
-    ## add Run new task option
+    ## <-- Update species --> ##
+    # SPECIES (A) -->
+    if (input$subject_choice == "Update Species for Frequency") {
+      source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
+    }
+    observeEvent(input$submit_sp_update, {
+      speciesFrom <- input$sp_choice
+      source("scripts/updateSpecies/updateSpeciesA_confirm.R", local = TRUE)
+    })
+    
+    # SPECIES TO (B) -->
+    observeEvent(input$open_sp_modal_B, {
+      req(input$sp_choice)
+      source("scripts/updateSpecies/updateSpeciesB.R", local = TRUE)
+    })
+    observeEvent(input$submit_sp_update_to, {
+      speciesTo <- input$sp_choice_2
+      source("scripts/updateSpecies/updateSpeciesB_confirm.R", local = TRUE)
+    })
+    observeEvent(input$submit_new_species, {
+      newSp <- input$new_fk_species
+      newSpQualifier <- input$new_qualifier
+      source("scripts/updateSpecies/updateNewSpecies.R", local = TRUE)
+    })
+    
+    # UPDATE SPECIES CHECK (A TO B) -->
+    observeEvent(input$open_sp_modal, {
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/confirmSpeciesUpdate.R", local = TRUE)
+    })
+    observeEvent(input$confirm_choice_sp, {
+      confirmTo <- input$confirm_choice_sp
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/processSpeciesUpdate.R", local = TRUE)
+    })
+    observeEvent(input$submit_check, {
+      update_speciesQ <- speciesUpdateQurey()
+      spFrom <- speciesA()
+      spTo <- speciesB()
+      source("scripts/updateSpecies/overrideCheck.R", local = TRUE)
+    })
+    
+    ## <-- REFRESH tasks button -->
     output$task_complete_ui <- renderUI({
       div(
         title = "Refresh app to run another task",
@@ -255,7 +320,6 @@ server <- function(input, output, session) {
   })
   
   # <-- RESULTS -->
-  # open site selection modal
   observeEvent(input$open_results_modal, {
     moveFrom <- siteA()
     moveTo <- siteB()
