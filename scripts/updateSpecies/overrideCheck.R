@@ -28,7 +28,11 @@ if (results > 0) {
     paste0("Species update was applied despite overlap. ",results," entries updated from ",fk_species_from," to ",fk_species_to,"."),
     tags$div(
       style = "color: darkred; font-weight: bold; margin-bottom: 10px;",
-      "Please look over generated .csv file and correct dupliactes in VGS5 by going to location and selecting the species(remove them) then re-adding them."
+      "Please look over generated .csv file and correct duplicates in VGS5."
+    ),
+    tags$div(
+      style = "color: gray; margin-bottom: 10px;",
+      "This can be done by going to each sample and de-selecting, then re-selecting the duplicated species."
     ),
     easyClose = TRUE
   ))
@@ -55,6 +59,6 @@ order by SiteID, Protocol.Date, EventName, Transect, SampleNumber, FK_Species")
 
 dup_freq_data <- DBI::dbGetQuery(mydb, dup_freq)
 
-out_path <- normalizePath(file.path("www", "duplicatedSpeciesToFix.csv"), mustWork = FALSE)
+out_path <- file.path(tempdir(), "duplicatedSpeciesToFix.csv")
 write.csv(dup_freq_data, out_path, row.names = FALSE)
 shell.exec(out_path)
