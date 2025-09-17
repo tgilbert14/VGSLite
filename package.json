@@ -29,8 +29,8 @@
     "dist": "electron-builder",
     "release": "electron-builder",
     "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=cc.ico --out=VGSLite",
-    "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --icon=www/assets/VGSLite.ico --out=VGSLite --version-string.CompanyName=ColumbusCollaboratory --version-string.FileDescription=CE --version-string.ProductName=\"VGSLite\"",
-    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=www/assets/VGSLite.png --prune=true --out=release-builds"
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=x64 --icon=www/assets/VGSLite2.ico --out=VGSLite --version-string.CompanyName=ColumbusCollaboratory --version-string.FileDescription=CE --version-string.ProductName=\"VGSLite\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=www/assets/VGSLite2.png --prune=true --out=release-builds"
   },
   "build": {
     "appId": "com.vgslite.app",
@@ -58,7 +58,7 @@
           "arch": "x64"
         }
       ],
-      "icon": "www/assets/VGSLite.ico"
+      "icon": "www/assets/VGSLite2.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -68,9 +68,9 @@
       "createDesktopShortcut": true,
       "shortcutName": "VGSLite 2.0",
       "runAfterFinish": true,
-      "installerIcon": "www/assets/VGSLite.ico",
-      "uninstallerIcon": "www/assets/VGSLite.ico",
-      "installerHeaderIcon": "www/assets/VGSLite.ico"
+      "installerIcon": "www/assets/VGSLite2.ico",
+      "uninstallerIcon": "www/assets/VGSLite2.ico",
+      "installerHeaderIcon": "www/assets/VGSLite2.ico"
     },
     "linux": {
       "target": [
@@ -78,7 +78,7 @@
           "target": "AppImage"
         }
       ],
-      "icon": "www/assets/VGSLite.png"
+      "icon": "www/assets/VGSLite2.png"
     },
     "mac": {
       "target": [
