@@ -38,6 +38,14 @@ getData <- function(table) {
   table.data <- dbGetQuery(mydb, query)
 }
 
+# Get Max Sync Key
+getSyncKey <- function() {
+  syncTracking <- paste0("Select Key from SyncTracking
+  where Status = 'CurrentSyncKey'")
+  SyncKey <- DBI::dbGetQuery(mydb, syncTracking)
+  return(as.numeric(SyncKey))
+}
+
 ## <-- Clean out / Delete unassigned sites -->
 
 #-- Use to delete unassigned sample data (everything in unassigned folder)

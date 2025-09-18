@@ -22,8 +22,7 @@ if (qualifier_to == "NA") {
 }
 
 # get max sync Key for update ->
-max_SyncKey <- paste0("select Max(SyncKey) from sample")
-SyncKey <- DBI::dbGetQuery(mydb, max_SyncKey)
+SyncKey <- getSyncKey()
 
 ## <-- Get PKs for table updates -->
 ## Samples -->

@@ -1,6 +1,5 @@
 # sync Key update ->
-max_SyncKey <- paste0("select Max(SyncKey) from event")
-SyncKey <- DBI::dbGetQuery(mydb, max_SyncKey)
+SyncKey <- getSyncKey()
 
 ## <-- Get PKs for table updates -->
 site_to_update <- paste0("Select DISTINCT FK_Site from Event
