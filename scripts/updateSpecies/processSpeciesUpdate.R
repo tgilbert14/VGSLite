@@ -150,9 +150,21 @@ rows_sp2 <- apply(where_species_is_already, 1, paste, collapse = "|")
 common_rows <- intersect(rows_sp1, rows_sp2)
 matched_rows <- where_updates_would_occur[rows_sp1 %in% common_rows, ]
 
+# update matched_rows data frame for download
+if (nrow(matched_rows)>0) {
+  displayMatchedRows <- matched_rows
+  displayMatchedRows$SpeciesCodeChanged <- paste0(parts_from[1],"(From ",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
+  # update reactive variable for download
+  matchedRows(displayMatchedRows)
+} else{
+  matchedRows(matched_rows)
+}
+
+# update where_updates_would_occur data frame for download
+speciesOccured <- where_updates_would_occur
+speciesOccured$SpeciesCodeChanged <- paste0(parts_from[1],"(From ",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
 # update reactive values for download
-speciesChanged(where_updates_would_occur)
-matchedRows(matched_rows)
+speciesChanged(speciesOccured)
 
 # pop up to override anyway or not
 if (nrow(matched_rows)>0) {
@@ -167,7 +179,7 @@ if (nrow(matched_rows)>0) {
       "Please review the overlapping records below before proceeding:"
     ),
     renderTable({
-      matched_rows
+      displayMatchedRows
     }, striped = TRUE, bordered = TRUE, width = "100%"),
     footer = tagList(
       modalButton("Cancel"),
@@ -205,7 +217,7 @@ if (nrow(matched_rows)>0) {
         "Updates occured at these locations:"
       ),
       renderTable({
-        where_updates_would_occur
+        speciesOccured
       }, striped = TRUE, bordered = TRUE, width = "100%"),
       footer = tagList(
         downloadButton("download_update_results", "Download CSV", class = "btn-success"),

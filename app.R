@@ -375,7 +375,7 @@ server <- function(input, output, session) {
   ## <-- download conflict updates button -->
   output$download_conflicts <- downloadHandler(
     filename = function() {
-      paste0("conflicting_species_", Sys.Date(), ".csv")
+      paste0("duplicatedSpecies_FreqAndDWR", Sys.Date(), ".csv")
     },
     content = function(file) {
       write.csv(matchedRows(), file, row.names = FALSE)
@@ -386,7 +386,7 @@ server <- function(input, output, session) {
   ## <-- download species changed updates button -->
   output$download_update_results <- downloadHandler(
     filename = function() {
-      paste0("species_update_results_", Sys.Date(), ".csv")
+      paste0("speciesUpdated_FreqAndDWR", Sys.Date(), ".csv")
     },
     content = function(file) {
       write.csv(speciesChanged(), file, row.names = FALSE)
