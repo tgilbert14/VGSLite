@@ -9,7 +9,7 @@ showModal(modalDialog(
                           "Delete Unassigned data",
                           "Empty Tombstone",
                           "Move Event",
-                          "Update Species for Frequency"#,
+                          "Update Species (Frequency/DWR)"#,
                           #"Unlock VGS"
                           )),
   footer = tagList(

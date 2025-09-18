@@ -117,12 +117,12 @@ ui <- fluidPage(
                                          icon = icon(	"arrow-right")), br(),
                             actionButton("open_event_modal", "Select Event to MOVE",
                                          icon = icon("exchange-alt")), br(),
-                            actionButton("open_results_modal", "Confirm Merge",
+                            actionButton("open_results_modal", "Move Event",
                                          icon = icon("play")),
                             # update species modals
                             actionButton("open_sp_modal_B", "TO",
                                          icon = icon(	"arrow-right")), br(),
-                            actionButton("open_sp_modal", "Confirm Update",
+                            actionButton("open_sp_modal", "Update Species",
                                          icon = icon("play"))
                             ) # end help window tab
                    
@@ -170,6 +170,11 @@ server <- function(input, output, session) {
   speciesB <- reactiveVal()
   speciesInfo <- reactiveVal()
   speciesUpdateQurey <- reactiveVal()
+  # updating sync keys for species
+  syncUpdateEvent <- reactiveVal()
+  syncUpdateEventGroup <- reactiveVal()
+  syncUpdateProtocol <- reactiveVal()
+  syncUpdateSite <- reactiveVal()
   
   # <-- Task Selection ->
   observeEvent(input$open_task_modal, {
@@ -190,7 +195,7 @@ server <- function(input, output, session) {
       updateTabsetPanel(session, "tab_menu", selected = "help")
       shinyjs::show("open_site_modal_A")
     }
-    if (input$subject_choice == "Update Species for Frequency") {
+    if (input$subject_choice == "Update Species (Frequency/DWR)") {
       updateTabsetPanel(session, "tab_menu", selected = "help")
     }
 
@@ -221,7 +226,7 @@ server <- function(input, output, session) {
     
     ## <-- Update species --> ##
     # SPECIES (A) -->
-    if (input$subject_choice == "Update Species for Frequency") {
+    if (input$subject_choice == "Update Species (Frequency/DWR)") {
       source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
     }
     observeEvent(input$submit_sp_update, {
@@ -258,6 +263,10 @@ server <- function(input, output, session) {
     })
     observeEvent(input$submit_check, {
       update_speciesQ <- speciesUpdateQurey()
+      event_updateQ <- syncUpdateEvent()
+      eventGroup_updateQ <- syncUpdateEventGroup()
+      protocol_updateQ <- syncUpdateProtocol()
+      site_updateQ <- syncUpdateSite()
       spFrom <- speciesA()
       spTo <- speciesB()
       source("scripts/updateSpecies/overrideCheck.R", local = TRUE)

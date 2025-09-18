@@ -22,10 +22,21 @@ if (qualifier_to == "NA") {
 
 results <- DBI::dbExecute(mydb, update_speciesQ)
 
+# clean up results statement
+qualifier_to <- gsub("=","-",qualifier_to)
+qualifier_from <- gsub("=","-",qualifier_from)
+
+if (qualifier_to == "IS NULL") {
+  qualifier_to <- ""
+}
+if (qualifier_from == "IS NULL") {
+  qualifier_from <- ""
+}
+
 if (results > 0) {
   showModal(modalDialog(
     title = "✅ Update Complete",
-    paste0("Species update was applied despite overlap. ",results," entries updated from ",fk_species_from," to ",fk_species_to,"."),
+    paste0("Species update was applied despite overlap. ",results," entries updated from ",fk_species_from,qualifier_from," to ",fk_species_to,qualifier_to,"."),
     tags$div(
       style = "color: darkred; font-weight: bold; margin-bottom: 10px;",
       "Please look over generated .csv file and correct duplicates in VGS5."
@@ -36,6 +47,11 @@ if (results > 0) {
     ),
     easyClose = TRUE
   ))
+  # update parents Sync Keys ->
+  DBI::dbExecute(mydb, event_updateQ)
+  DBI::dbExecute(mydb, eventGroup_updateQ)
+  DBI::dbExecute(mydb, protocol_updateQ)
+  DBI::dbExecute(mydb, site_updateQ)
   # should add code to get rid of duplicates...
 } else {
   showModal(modalDialog(
