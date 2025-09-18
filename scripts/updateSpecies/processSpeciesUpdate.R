@@ -150,6 +150,10 @@ rows_sp2 <- apply(where_species_is_already, 1, paste, collapse = "|")
 common_rows <- intersect(rows_sp1, rows_sp2)
 matched_rows <- where_updates_would_occur[rows_sp1 %in% common_rows, ]
 
+# update reactive values for download
+speciesChanged(where_updates_would_occur)
+matchedRows(matched_rows)
+
 # pop up to override anyway or not
 if (nrow(matched_rows)>0) {
   showModal(modalDialog(
@@ -167,6 +171,7 @@ if (nrow(matched_rows)>0) {
     }, striped = TRUE, bordered = TRUE, width = "100%"),
     footer = tagList(
       modalButton("Cancel"),
+      downloadButton("download_conflicts", "Download CSV", class = "btn-info"),
       actionButton("submit_check", "Override Anyway", class = "btn-danger")
     ),
     easyClose = TRUE,
@@ -202,7 +207,10 @@ if (nrow(matched_rows)>0) {
       renderTable({
         where_updates_would_occur
       }, striped = TRUE, bordered = TRUE, width = "100%"),
-      footer = modalButton("OK"),
+      footer = tagList(
+        downloadButton("download_update_results", "Download CSV", class = "btn-success"),
+        modalButton("OK")
+      ),
       easyClose = TRUE
     ))
     # update parent Sync Keys ->

@@ -4,6 +4,11 @@
 db_loc <- "C:/ProgramData/VGSData/VGS50.db"
 mydb <- dbConnect(RSQLite::SQLite(), dbname = db_loc)
 
+# "C:/ProgramData/VGSData/DataBackups/"
+# out_path_matchedRows <- file.path(tempdir(), "duplicatedSpecies.csv")
+# out_path_speciesChanged <- file.path(tempdir(), "speciesChanged.csv")
+
+
 # <-- functions -->
 # Convert UUID to hexadecimal
 Convert2Hex <- function(vgs5_guid) {

@@ -170,6 +170,9 @@ server <- function(input, output, session) {
   speciesB <- reactiveVal()
   speciesInfo <- reactiveVal()
   speciesUpdateQurey <- reactiveVal()
+  matchedRows <- reactiveVal()
+  speciesChanged <- reactiveVal()
+  
   # updating sync keys for species
   syncUpdateEvent <- reactiveVal()
   syncUpdateEventGroup <- reactiveVal()
@@ -354,7 +357,7 @@ server <- function(input, output, session) {
     source("scripts/refreshTask.R", local = TRUE)
   })
   
-  ## <-- download button -->
+  ## <-- download database button -->
   output$download_db <- downloadHandler(
     filename = function() {
       paste0("VGSLite_Backup_", Sys.Date(), ".db")
@@ -367,6 +370,28 @@ server <- function(input, output, session) {
       }
     },
     contentType = "application/octet-stream"
+  )
+  
+  ## <-- download conflict updates button -->
+  output$download_conflicts <- downloadHandler(
+    filename = function() {
+      paste0("conflicting_species_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(matchedRows(), file, row.names = FALSE)
+    },
+    contentType = "text/csv"
+  )
+  
+  ## <-- download species changed updates button -->
+  output$download_update_results <- downloadHandler(
+    filename = function() {
+      paste0("species_update_results_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(speciesChanged(), file, row.names = FALSE)
+    },
+    contentType = "text/csv"
   )
   
   # disconnect database on session end
