@@ -16,7 +16,7 @@ showModal(modalDialog(
   selectInput("event_choice", "Move", choices = event_info$Date),
   footer = tagList(
     modalButton("Cancel"),
-    actionButton("submit_event", "OK")
+    actionButton("submit_event", "OK", class = "btn-primary")
   ),
   easyClose = TRUE
 ))

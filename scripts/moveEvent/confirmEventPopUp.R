@@ -6,7 +6,7 @@ showModal(modalDialog(
                                "' for ",substr(onDate,1,10),"?")),
   footer = tagList(
     modalButton("Cancel"),
-    actionButton("submit_confirm", "OK")
+    actionButton("submit_confirm", "OK", class = "btn-primary")
   ),
   easyClose = TRUE
 ))

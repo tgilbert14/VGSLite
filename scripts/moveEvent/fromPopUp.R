@@ -15,7 +15,7 @@ if (continue_app == TRUE) {
     selectInput("site_choice", "FROM", choices = sitesFound),
     footer = tagList(
       modalButton("Cancel"),
-      actionButton("submit_site_from", "OK")
+      actionButton("submit_site_from", "OK", class = "btn-primary")
     ),
     easyClose = TRUE
   ))

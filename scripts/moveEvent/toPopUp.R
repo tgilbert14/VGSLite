@@ -7,7 +7,7 @@ showModal(modalDialog(
   selectInput("site_choice_2", "TO", choices = sitesFound),
   footer = tagList(
     modalButton("Cancel"),
-    actionButton("submit_site_to", "OK")
+    actionButton("submit_site_to", "OK", class = "btn-primary")
   ),
   easyClose = TRUE
 ))
