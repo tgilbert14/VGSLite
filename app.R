@@ -191,6 +191,7 @@ server <- function(input, output, session) {
     output$selected_sub <- renderPrint({
       cat(paste0("Task Selected: ", subj))
     })
+    Sys.sleep(.2)
     removeModal()
     
     # Move to help window tab for multi-step tasks
@@ -262,6 +263,7 @@ server <- function(input, output, session) {
       confirmTo <- input$confirm_choice_sp
       spFrom <- speciesA()
       spTo <- speciesB()
+      SyncKey <- getSyncKey()
       source("scripts/updateSpecies/processSpeciesUpdate.R", local = TRUE)
     })
     observeEvent(input$submit_check, {
@@ -344,6 +346,7 @@ server <- function(input, output, session) {
     moveFrom <- siteA()
     moveTo <- siteB()
     onDate <- unique(eventDate())
+    SyncKey <- getSyncKey()
     source("scripts/moveEvent/moveEvent.R", local = TRUE)
   })
   
@@ -375,18 +378,18 @@ server <- function(input, output, session) {
   ## <-- download conflict updates button -->
   output$download_conflicts <- downloadHandler(
     filename = function() {
-      paste0("duplicatedSpecies_FreqAndDWR", Sys.Date(), ".csv")
+      paste0(speciesB(),"_duplicationsToFix_",Sys.Date(),".csv")
     },
     content = function(file) {
       write.csv(matchedRows(), file, row.names = FALSE)
     },
     contentType = "text/csv"
   )
-  
+
   ## <-- download species changed updates button -->
   output$download_update_results <- downloadHandler(
     filename = function() {
-      paste0("speciesUpdated_FreqAndDWR", Sys.Date(), ".csv")
+      paste0(speciesA(),"_updatedTo_",speciesB(),"_",Sys.Date(),".csv")
     },
     content = function(file) {
       write.csv(speciesChanged(), file, row.names = FALSE)

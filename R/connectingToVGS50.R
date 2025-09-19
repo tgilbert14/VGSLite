@@ -8,6 +8,9 @@ mydb <- dbConnect(RSQLite::SQLite(), dbname = db_loc)
 # out_path_matchedRows <- file.path(tempdir(), "duplicatedSpecies.csv")
 # out_path_speciesChanged <- file.path(tempdir(), "speciesChanged.csv")
 
+# species allowed in VGS5
+VGS_codes <- read.csv("www/acceptedCodes.csv")
+VGScodes <- unique(VGS_codes$Symbol)
 
 # <-- functions -->
 # Convert UUID to hexadecimal
@@ -45,9 +48,16 @@ getData <- function(table) {
 
 # Get Max Sync Key
 getSyncKey <- function() {
+  # get current Sync Key
   syncTracking <- paste0("Select Key from SyncTracking
   where Status = 'CurrentSyncKey'")
   SyncKey <- DBI::dbGetQuery(mydb, syncTracking)
+  ## if no current, get last transaction Sync Key
+  if (nrow(SyncKey) == 0) {
+    syncTracking <- paste0("Select Key from SyncTracking
+    where Status = 'LastTransaction'")
+    SyncKey <- DBI::dbGetQuery(mydb, syncTracking)
+  }
   return(as.numeric(SyncKey))
 }
 

@@ -1,5 +1,3 @@
-# sync Key update ->
-SyncKey <- getSyncKey()
 
 ## <-- Get PKs for table updates -->
 site_to_update <- paste0("Select DISTINCT FK_Site from Event
@@ -67,5 +65,6 @@ output$selected_results <- renderPrint({
     cat("Something went wrong, please check you database or try again.")
   }
 })
+Sys.sleep(.2)
 removeModal()
 shinyjs::hide("open_results_modal")
