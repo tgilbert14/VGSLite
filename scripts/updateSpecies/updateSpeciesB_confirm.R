@@ -18,6 +18,7 @@ if (input$sp_choice_2 == "New Species") {
   output$selected_siteTo <- renderPrint({
     cat(paste0("Update species to: ", speciesTo))
   })
+  Sys.sleep(.2)
   removeModal()
   # hide old selection and add new site B selection
   shinyjs::hide("open_sp_modal_B")

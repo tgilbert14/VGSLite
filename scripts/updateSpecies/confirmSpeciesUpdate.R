@@ -9,4 +9,5 @@ showModal(modalDialog(
   ),
   easyClose = TRUE
 ))
+Sys.sleep(.2)
 removeModal()

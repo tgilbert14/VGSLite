@@ -21,9 +21,6 @@ if (qualifier_to == "NA") {
   qualifier_insert = TRUE
 }
 
-# get max sync Key for update ->
-SyncKey <- getSyncKey()
-
 ## <-- Get PKs for table updates -->
 ## Samples -->
 update_syncKeys_Sample <- paste0("Select DISTINCT PK_Sample from Sample
@@ -153,7 +150,7 @@ matched_rows <- where_updates_would_occur[rows_sp1 %in% common_rows, ]
 # update matched_rows data frame for download
 if (nrow(matched_rows)>0) {
   displayMatchedRows <- matched_rows
-  displayMatchedRows$SpeciesCodeChanged <- paste0(parts_from[1],"(From ",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
+  displayMatchedRows$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
   # update reactive variable for download
   matchedRows(displayMatchedRows)
 } else{
@@ -162,7 +159,7 @@ if (nrow(matched_rows)>0) {
 
 # update where_updates_would_occur data frame for download
 speciesOccured <- where_updates_would_occur
-speciesOccured$SpeciesCodeChanged <- paste0(parts_from[1],"(From ",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
+speciesOccured$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
 # update reactive values for download
 speciesChanged(speciesOccured)
 
@@ -178,14 +175,19 @@ if (nrow(matched_rows)>0) {
       style = "margin-bottom: 10px;",
       "Please review the overlapping records below before proceeding:"
     ),
+    tags$div(
+      modalButton("Cancel"),
+      actionButton("submit_check", "Override Anyway", class = "btn-danger"),
+      downloadButton("download_conflicts", "Download CSV", class = "btn-info")
+    ),
     renderTable({
       displayMatchedRows
     }, striped = TRUE, bordered = TRUE, width = "100%"),
-    footer = tagList(
-      modalButton("Cancel"),
-      downloadButton("download_conflicts", "Download CSV", class = "btn-info"),
-      actionButton("submit_check", "Override Anyway", class = "btn-danger")
-    ),
+    # footer = tagList(
+    #   modalButton("Cancel"),
+    #   downloadButton("download_conflicts", "Download CSV", class = "btn-info"),
+    #   actionButton("submit_check", "Override Anyway", class = "btn-danger")
+    # ),
     easyClose = TRUE,
     size = "l"
   ))
@@ -216,13 +218,17 @@ if (nrow(matched_rows)>0) {
         style = "margin-bottom: 10px;",
         "Updates occured at these locations:"
       ),
+      tags$div(
+        modalButton("OK"),
+        downloadButton("download_update_results", "Download CSV", class = "btn-success"),
+      ),
       renderTable({
         speciesOccured
       }, striped = TRUE, bordered = TRUE, width = "100%"),
-      footer = tagList(
-        downloadButton("download_update_results", "Download CSV", class = "btn-success"),
-        modalButton("OK")
-      ),
+      # footer = tagList(
+      #   downloadButton("download_update_results", "Download CSV", class = "btn-success"),
+      #   modalButton("OK")
+      # ),
       easyClose = TRUE
     ))
     # update parent Sync Keys ->
