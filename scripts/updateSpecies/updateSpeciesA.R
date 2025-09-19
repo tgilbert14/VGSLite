@@ -7,7 +7,7 @@ INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
 INNER JOIN Site ON Site.PK_Site = Event.FK_Site
 INNER JOIN Sample ON Sample.FK_Event = Event.PK_Event
 INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
 order by Sample.FK_Species")
 
 speciesInUse <- dbGetQuery(mydb, sp_check)

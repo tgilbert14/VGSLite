@@ -1,19 +1,16 @@
 # get rid of species selected 'from'
 
-## Check all species being used
-sp_check <- paste0("
-  SELECT DISTINCT Sample.FK_Species, Sample.SpeciesQualifier
-  FROM Protocol
-  INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
-  INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
-  INNER JOIN Site ON Site.PK_Site = Event.FK_Site
-  INNER JOIN Sample ON Sample.FK_Event = Event.PK_Event
-  INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  WHERE List = 'NRCS' AND eventName LIKE '%Frequency%'
-  ORDER BY Sample.FK_Species
-")
+## Check all species being used - only using approved NRCS species
+sp_check_NRCS_only <- paste0("SELECT DISTINCT Sample.FK_Species, Sample.SpeciesQualifier from Protocol
+INNER JOIN EventGroup ON EventGroup.FK_Protocol = Protocol.PK_Protocol
+INNER JOIN Event ON Event.FK_EventGroup = EventGroup.PK_EventGroup
+INNER JOIN Site ON Site.PK_Site = Event.FK_Site
+INNER JOIN Sample ON Sample.FK_Event = Event.PK_Event
+INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
+where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+order by Sample.FK_Species")
 
-speciesInUse <- dbGetQuery(mydb, sp_check)
+speciesInUse <- dbGetQuery(mydb, sp_check_NRCS_only)
 
 speciesLeft <- subset(speciesInUse, paste(FK_Species, SpeciesQualifier, sep = "-") != input$sp_choice)
 species_choices_2 <- c(
