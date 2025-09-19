@@ -14,7 +14,7 @@ showModal(modalDialog(
                           )),
   footer = tagList(
     modalButton("Cancel"),
-    actionButton("submit_subject", "OK")
+    actionButton("submit_subject", "OK", class = "btn-primary")
   ),
   easyClose = TRUE
 ))
