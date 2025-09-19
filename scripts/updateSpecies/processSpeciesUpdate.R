@@ -188,7 +188,7 @@ if (nrow(matched_rows)>0) {
     #   downloadButton("download_conflicts", "Download CSV", class = "btn-info"),
     #   actionButton("submit_check", "Override Anyway", class = "btn-danger")
     # ),
-    easyClose = TRUE,
+    #easyClose = TRUE,
     size = "l"
   ))
 } else {
@@ -229,7 +229,7 @@ if (nrow(matched_rows)>0) {
       #   downloadButton("download_update_results", "Download CSV", class = "btn-success"),
       #   modalButton("OK")
       # ),
-      easyClose = TRUE
+      #easyClose = TRUE
     ))
     # update parent Sync Keys ->
     DBI::dbExecute(mydb, event_updateQ)
@@ -239,4 +239,4 @@ if (nrow(matched_rows)>0) {
   }
 }
 
-shinyjs::hide("open_results_modal")
+shinyjs::hide("open_sp_modal")
