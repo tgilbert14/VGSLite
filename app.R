@@ -202,6 +202,11 @@ server <- function(input, output, session) {
     if (input$subject_choice == "Update Species (Frequency/DWR)") {
       updateTabsetPanel(session, "tab_menu", selected = "help")
     }
+    
+    ## <-- Check for var. and subspecies in use to fix or update --> ##
+    if (input$subject_choice == "Check for var/sub species") {
+      source("scripts/varSpeciesCheck.R", local = TRUE)
+    }
 
     ## <-- Make everything Local ONLY --> ##
     if (input$subject_choice == "Convert database to Local") {
@@ -390,6 +395,17 @@ server <- function(input, output, session) {
   output$download_update_results <- downloadHandler(
     filename = function() {
       paste0(speciesA(),"_updatedTo_",speciesB(),"_",Sys.Date(),".csv")
+    },
+    content = function(file) {
+      write.csv(speciesChanged(), file, row.names = FALSE)
+    },
+    contentType = "text/csv"
+  )
+  
+  ## <-- download species of interest button -->
+  output$download_var_results <- downloadHandler(
+    filename = function() {
+      paste0("SpeciesOfInterest_",Sys.Date(),".csv")
     },
     content = function(file) {
       write.csv(speciesChanged(), file, row.names = FALSE)

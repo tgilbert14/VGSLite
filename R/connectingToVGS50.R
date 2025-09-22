@@ -61,6 +61,16 @@ getSyncKey <- function() {
   return(as.numeric(SyncKey))
 }
 
+# Clean qualifier
+clean_qualifier <- function(x) {
+  x <- gsub("%", "", x)     # remove %
+  x <- gsub("_", "", x)     # remove _
+  x <- gsub("\\[", "", x)   # remove [
+  x <- gsub("'", "''", x)   # escape single quotes
+  x <- trimws(x)            # remove leading/trailing spaces
+  return(x)
+}
+
 ## <-- Clean out / Delete unassigned sites -->
 
 #-- Use to delete unassigned sample data (everything in unassigned folder)

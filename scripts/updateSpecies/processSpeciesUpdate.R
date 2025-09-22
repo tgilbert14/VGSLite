@@ -21,6 +21,9 @@ if (qualifier_to == "NA") {
   qualifier_insert = TRUE
 }
 
+# clean up wildcards user might have added
+qualifier_to <- clean_qualifier(qualifier_to)
+
 ## <-- Get PKs for table updates -->
 ## Samples -->
 update_syncKeys_Sample <- paste0("Select DISTINCT PK_Sample from Sample
@@ -157,11 +160,24 @@ if (nrow(matched_rows)>0) {
   matchedRows(matched_rows)
 }
 
-# update where_updates_would_occur data frame for download
+# update where_updates_would_occur data frame for download (freq only)
 speciesOccured <- where_updates_would_occur
-speciesOccured$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
-# update reactive values for download
-speciesChanged(speciesOccured)
+# freq changes would be made
+if (nrow(speciesOccured)>0) {
+  speciesOccured$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from[2],") to ",parts_to[1],"(",parts_to[2],")")
+  speciesChanged(speciesOccured) # update reactive values for download
+} else {
+  # this means only DWR is being changed -> create a table to tell user
+  speciesOccured <- data.frame(
+    SpeciesCodeChanged = "No frequency frame species updates, only DWR species were changed.",
+    Transect = "NA",
+    SampleNumber = "NA",
+    SiteID = "NA",
+    Date = "NA",
+    stringsAsFactors = FALSE
+  )
+  speciesChanged(speciesOccured) # update reactive values for download
+}
 
 # pop up to override anyway or not
 if (nrow(matched_rows)>0) {
@@ -173,7 +189,7 @@ if (nrow(matched_rows)>0) {
     ),
     tags$div(
       style = "margin-bottom: 10px;",
-      "Please review the overlapping records below before proceeding:"
+      "Please review the Frequency Frame overlapping records below before proceeding:"
     ),
     tags$div(
       modalButton("Cancel"),
@@ -205,14 +221,13 @@ if (nrow(matched_rows)>0) {
   if (qualifier_from == "IS NULL") {
     qualifier_from <- ""
   }
-
   
   if (results > 0) {
     showModal(modalDialog(
       title = "✅ Update Complete",
       tags$div(
         style = "color: darkgreen; font-weight: bold; margin-bottom: 10px;",
-        paste0("No conflicts found, ",results," entries updated from ",fk_species_from,qualifier_from," to ",fk_species_to,qualifier_to,".")
+        paste0("No conflicts found, ",results," entries for Frequency (and/or DWR) updated from ",fk_species_from,qualifier_from," to ",fk_species_to,qualifier_to,".")
       ),
       tags$div(
         style = "margin-bottom: 10px;",
