@@ -234,10 +234,28 @@ server <- function(input, output, session) {
     }
     
     ## <-- Update species --> ##
-    # SPECIES (A) -->
-    if (input$subject_choice == "Update Species (Frequency/DWR)") {
-      source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
-    }
+    observeEvent(input$subject_choice, {
+      if (input$subject_choice == "Update Species (Frequency/DWR)") {
+        if (adminLevel == "TRUE") {
+          # SPECIES (A) -->
+          source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
+        } else {
+          showModal(modalDialog(
+            title = "🔐 Enter Access PIN",
+            passwordInput("pin_input", "PIN:", value = ""),
+            footer = tagList(
+              actionButton("submit_pin", "Submit"),
+              modalButton("Cancel")
+            ),
+            easyClose = FALSE
+          ))
+        }
+      }
+    })
+    # admin check -->
+    observeEvent(input$submit_pin, {
+      source("scripts/checkPin.R", local = TRUE)
+    })
     observeEvent(input$submit_sp_update, {
       speciesFrom <- input$sp_choice
       source("scripts/updateSpecies/updateSpeciesA_confirm.R", local = TRUE)

@@ -4,9 +4,9 @@
 db_loc <- "C:/ProgramData/VGSData/VGS50.db"
 mydb <- dbConnect(RSQLite::SQLite(), dbname = db_loc)
 
-# "C:/ProgramData/VGSData/DataBackups/"
-# out_path_matchedRows <- file.path(tempdir(), "duplicatedSpecies.csv")
-# out_path_speciesChanged <- file.path(tempdir(), "speciesChanged.csv")
+# access level
+adminLevel <- read.csv("www/access.csv")
+accessLevel <- adminLevel$admin
 
 # species allowed in VGS5
 VGS_codes <- read.csv("www/acceptedCodes.csv")
