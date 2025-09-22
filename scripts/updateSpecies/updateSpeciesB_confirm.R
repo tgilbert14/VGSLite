@@ -16,7 +16,7 @@ if (input$sp_choice_2 == "New Species") {
   speciesB(speciesTo)
   # confirm selection
   output$selected_siteTo <- renderPrint({
-    cat(paste0("Update species to: ", speciesTo))
+    cat(paste0("Update species to: ", speciesTo," (",VGS_codes$Scientific.Name[VGS_codes$Symbol == speciesTo],")"))
   })
   Sys.sleep(.2)
   removeModal()
