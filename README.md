@@ -12,9 +12,11 @@ To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows 
 
 ## Features
 
+-   ✅ **Check for var and sub species:** Checks for variety and subspecies being used. These are often entered by mistake. This allows the user to download a list of species of interest being used.
+
 -   ✅ **Clean Database:** Cleans up any orphan data links that may exist to help prevent corrupt data. Often used before "Empty Tombstone" to troubleshoot sync issues.
 
--   ✅ **Convert database to Local:** Moves cloud data into local folders. Not recommended unless you plan on only collecting data locally.
+-   ✅ **Convert database to Local:** Moves cloud data into local folders. **NOT** recommended unless you plan on only collecting data locally.
 
 -   ✅ **Delete Unassigned data:** Deletes all data and sites inside the "Unassigned" bin at once instead of going though each event.
 

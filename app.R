@@ -204,7 +204,7 @@ server <- function(input, output, session) {
     }
     
     ## <-- Check for var. and subspecies in use to fix or update --> ##
-    if (input$subject_choice == "Check for var/sub species") {
+    if (input$subject_choice == "Check for var and sub species") {
       source("scripts/varSpeciesCheck.R", local = TRUE)
     }
 
