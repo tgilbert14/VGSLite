@@ -164,7 +164,7 @@ speciesOccured$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from
 speciesChanged(speciesOccured)
 
 # pop up to override anyway or not
-if (nrow(matched_rows_c)>0) {
+if (nrow(matched_rows)>0) {
   showModal(modalDialog(
     title = "⚠️ Species Update Blocked",
     tags$div(
