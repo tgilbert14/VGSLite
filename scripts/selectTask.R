@@ -3,7 +3,8 @@
 showModal(modalDialog(
   title = "Select Task to Run in VGS 5 Desktop",
   selectInput("subject_choice", "Tasks",
-              choices = c("Clean Database",
+              choices = c("Check for var/sub species",
+                          "Clean Database",
                           #"Clean Species Up",
                           "Convert database to Local",
                           "Delete Unassigned data",
