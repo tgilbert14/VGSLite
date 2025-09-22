@@ -27,9 +27,11 @@ if (length(newSpQualifier)>20 || grepl("[[:punct:]]", newSpQualifier)) {
   } else {
     speciesTo <- paste0(newSp, "-", newSpQualifier)
     speciesB(speciesTo)
-   
+    
+    species_name <- VGS_codes$Scientific.Name[VGS_codes$Symbol == newSp]
+    
     output$selected_siteTo <- renderPrint({
-      cat(paste0("Update species to: ", speciesTo," (",VGS_codes$Scientific.Name[VGS_codes$Symbol == speciesTo],")"))
+      cat(paste0("Update species to: ", speciesTo," (",species_name,")"))
     })
     
     Sys.sleep(.2)
