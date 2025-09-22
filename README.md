@@ -22,6 +22,8 @@ To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows 
 
 -   ✅ **Move Event:** Lets user move a single event from an existing site to another site. Often used when an event was put on the wrong site. This **WILL NOT UPDATE SYNC STATE** *(i.e., cloud-to-local or local-to-cloud).*
 
+-   ✅ **Update Species (Frequency/DWR):** Lets user update a species in every instance it occurs for frequency and DWR methods for all data downloaded onto VGS5 device*.* Provides a downloadable csv file to track updates and checks for possible issues with updates.
+
 ## Usage
 
 After launching the app:

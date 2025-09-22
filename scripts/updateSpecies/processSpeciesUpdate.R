@@ -29,7 +29,7 @@ update_syncKeys_Sample <- paste0("Select DISTINCT PK_Sample from Sample
   inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
   inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
   INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+  where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
   and FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
   order by SiteID, Protocol.Date, Transect, SampleNumber")
 ## Events -->
@@ -39,7 +39,7 @@ update_syncKeys_Event <- paste0("Select DISTINCT PK_Event from Sample
   inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
   inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
   INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+  where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
   and FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
   order by SiteID, Protocol.Date, Transect, SampleNumber")
 event_updateQ <- paste0("Update Event
@@ -53,7 +53,7 @@ update_syncKeys_EventGroup <- paste0("Select DISTINCT PK_EventGroup from Sample
   inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
   inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
   INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+  where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
   and FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
   order by SiteID, Protocol.Date, Transect, SampleNumber")
 eventGroup_updateQ <- paste0("Update EventGroup
@@ -67,7 +67,7 @@ update_syncKeys_Protocol <- paste0("Select DISTINCT PK_Protocol from Sample
   inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
   inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
   INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+  where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
   and FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
   order by SiteID, Protocol.Date, Transect, SampleNumber")
 protocol_updateQ <- paste0("Update Protocol
@@ -81,7 +81,7 @@ update_syncKeys_Site <- paste0("Select DISTINCT PK_Site from Sample
   inner join eventgroup on eventgroup.PK_EventGroup = Event.FK_EventGroup
   inner join protocol on protocol.PK_protocol = EventGroup.FK_Protocol
   INNER JOIN Species ON Species.PK_Species = Sample.FK_Species
-  where List = 'NRCS' and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
+  where (List = 'NRCS' OR List = 'UDFS') and (eventName LIKE '%Freq%' OR eventName LIKE '%DWR%')
   and FK_Species = '",fk_species_from,"' and speciesQualifier ",qualifier_from," 
   order by SiteID, Protocol.Date, Transect, SampleNumber")
 site_updateQ <- paste0("Update Site
@@ -146,8 +146,6 @@ rows_sp1 <- apply(where_updates_would_occur, 1, paste, collapse = "|")
 rows_sp2 <- apply(where_species_is_already, 1, paste, collapse = "|")
 common_rows <- intersect(rows_sp1, rows_sp2)
 matched_rows <- where_updates_would_occur[rows_sp1 %in% common_rows, ]
-cat(matched_rows)
-stop()
 
 # update matched_rows data frame for download
 if (nrow(matched_rows)>0) {
@@ -166,7 +164,7 @@ speciesOccured$SpeciesCodeChanged <- paste0("From ",parts_from[1],"(",parts_from
 speciesChanged(speciesOccured)
 
 # pop up to override anyway or not
-if (nrow(matched_rows)>0) {
+if (nrow(matched_rows_c)>0) {
   showModal(modalDialog(
     title = "⚠️ Species Update Blocked",
     tags$div(
@@ -194,7 +192,6 @@ if (nrow(matched_rows)>0) {
     size = "l"
   ))
 } else {
-
   # update species ->
   results <- DBI::dbExecute(mydb, merge_q)
   
