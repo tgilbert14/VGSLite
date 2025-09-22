@@ -6,7 +6,7 @@
 
 To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows device:
 
-1.  Download the latest release from [VGSLite](https://github.com/tgilbert14/VGSLite/releases/tag/v2.0).
+1.  Download the latest release from [VGSLite](https://github.com/tgilbert14/VGSLite/releases).
 2.  Unzip the folder and run the latest `VGSLite Setup.exe`.
 3.  You may have to click "more info" in order to install the application.
 
@@ -25,6 +25,12 @@ To install [**VGSLite**](https://github.com/tgilbert14/VGSLite) on your Windows 
 -   ✅ **Move Event:** Lets user move a single event from an existing site to another site. Often used when an event was put on the wrong site. This **WILL NOT UPDATE SYNC STATE** *(i.e., cloud-to-local or local-to-cloud).*
 
 -   ✅ **Update Species (Frequency/DWR):** Lets user update a species in every instance it occurs for frequency and DWR methods for all data downloaded onto VGS5 device*.* Provides a downloadable csv file to track updates and checks for possible issues with updates.
+
+    <div>
+
+    *Some features may require admin access, please reach out to [tsgilbert\@arizona.edu](mailto:tsgilbert@arizona.edu) for more information.*
+
+    </div>
 
 ## Usage
 
