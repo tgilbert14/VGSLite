@@ -123,7 +123,9 @@ ui <- fluidPage(
                             actionButton("open_sp_modal_B", "TO",
                                          icon = icon(	"arrow-right")), br(),
                             actionButton("open_sp_modal", "Update Species",
-                                         icon = icon("play"))
+                                         icon = icon("play")),
+                            actionButton("open_add_another_species", "Update Another Species?",
+                                         icon = icon("refresh"))
                             ) # end help window tab
                    
                    ) # end of all tabs
@@ -146,6 +148,7 @@ server <- function(input, output, session) {
   shinyjs::hide("open_site_sp_B")
   shinyjs::hide("open_sp_modal")
   shinyjs::hide("open_sp_modal_B")
+  shinyjs::hide("open_add_another_species")
   
   # get data
   data_site <- reactive({
@@ -235,8 +238,10 @@ server <- function(input, output, session) {
     
     ## <-- Update species --> ##
     observeEvent(input$subject_choice, {
+      # check access
+      access_flag <- read.csv(access_path, stringsAsFactors = FALSE)
       if (input$subject_choice == "Update Species (Frequency/DWR)") {
-        if (adminLevel == "TRUE") {
+        if (access_flag$admin == "TRUE") {
           # SPECIES (A) -->
           source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
         } else {
@@ -244,7 +249,7 @@ server <- function(input, output, session) {
             title = "🔐 Enter Access PIN",
             passwordInput("pin_input", "PIN:", value = ""),
             footer = tagList(
-              actionButton("submit_pin", "Submit"),
+              actionButton("submit_pin", "Submit", class = "btn-info"),
               modalButton("Cancel")
             ),
             easyClose = FALSE
@@ -254,6 +259,7 @@ server <- function(input, output, session) {
     })
     # admin check -->
     observeEvent(input$submit_pin, {
+      pin <- input$pin_input
       source("scripts/checkPin.R", local = TRUE)
     })
     observeEvent(input$submit_sp_update, {
@@ -298,6 +304,30 @@ server <- function(input, output, session) {
       spFrom <- speciesA()
       spTo <- speciesB()
       source("scripts/updateSpecies/overrideCheck.R", local = TRUE)
+    })
+    
+    ## Add another species button -->
+    observeEvent(input$open_add_another_species, {
+      shinyjs::hide("open_add_another_species")
+      output$selected_siteFrom <- renderPrint({
+        cat(paste0("Select new species from..."))
+      })
+      output$selected_siteTo <- renderPrint({
+        cat(paste0("Select new species to..."))
+      })
+      # reset reactive variables
+      speciesUpdateQurey(NULL)
+      syncUpdateEvent(NULL)
+      syncUpdateEventGroup(NULL)
+      syncUpdateProtocol(NULL)
+      syncUpdateSite(NULL)
+      speciesA(NULL)
+      speciesB(NULL)
+      speciesInfo(NULL)
+      matchedRows(NULL)
+      speciesChanged(NULL)
+      # open species selection again
+      source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
     })
     
     ## <-- REFRESH tasks button -->

@@ -4,10 +4,6 @@
 db_loc <- "C:/ProgramData/VGSData/VGS50.db"
 mydb <- dbConnect(RSQLite::SQLite(), dbname = db_loc)
 
-# access level
-adminLevel <- read.csv("www/access.csv")
-accessLevel <- adminLevel$admin
-
 # species allowed in VGS5
 VGS_codes <- read.csv("www/acceptedCodes.csv")
 VGScodes <- unique(VGS_codes$Symbol)
@@ -51,13 +47,14 @@ getSyncKey <- function() {
   # get current Sync Key
   syncTracking <- paste0("Select Key from SyncTracking
   where Status = 'CurrentSyncKey'")
-  SyncKey <- DBI::dbGetQuery(mydb, syncTracking)
-  ## if no current, get last transaction Sync Key
-  if (nrow(SyncKey) == 0) {
-    syncTracking <- paste0("Select Key from SyncTracking
-    where Status = 'LastTransaction'")
-    SyncKey <- DBI::dbGetQuery(mydb, syncTracking)
-  }
+  SyncKey_current <- DBI::dbGetQuery(mydb, syncTracking)
+  ## get last transaction Sync Key
+  syncTracking <- paste0("Select Key from SyncTracking
+  where Status = 'LastTransaction'")
+  SyncKey_last <- DBI::dbGetQuery(mydb, syncTracking)
+  # get max between both
+  SyncKey <- max(SyncKey_current, SyncKey_last)
+  # return numeric value
   return(as.numeric(SyncKey))
 }
 

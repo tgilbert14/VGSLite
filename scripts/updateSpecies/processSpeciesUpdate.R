@@ -255,3 +255,5 @@ if (nrow(matched_rows)>0) {
 }
 
 shinyjs::hide("open_sp_modal")
+# show add another species button
+shinyjs::show("open_add_another_species")
