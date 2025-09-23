@@ -138,7 +138,7 @@ server <- function(input, output, session) {
   # re-establish connection after refresh button hit
   source("R/connectingToVGS50.R", local = TRUE)
   
-  continue_app = TRUE
+  selfDestruct = FALSE
   
   # hide initial buttons/elements
   shinyjs::hide("open_site_modal_A")
@@ -239,9 +239,8 @@ server <- function(input, output, session) {
     ## <-- Update species --> ##
     observeEvent(input$subject_choice, {
       # check access
-      access_flag <- read.csv(access_path, stringsAsFactors = FALSE)
       if (input$subject_choice == "Update Species (Frequency/DWR)") {
-        if (access_flag$admin == "TRUE") {
+        if (selfDestruct == "TRUE") {
           # SPECIES (A) -->
           source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
         } else {
