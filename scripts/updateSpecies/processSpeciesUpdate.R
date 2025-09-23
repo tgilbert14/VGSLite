@@ -13,6 +13,8 @@ if (qualifier_from == "NA") {
 parts_to <- strsplit(spTo, "-", fixed = TRUE)[[1]]
 fk_species_to <- parts_to[1]
 qualifier_to <- parts_to[2]
+# clean up wildcards user might have added -> 
+qualifier_to <- clean_qualifier(qualifier_to)
 if (qualifier_to == "NA") {
   qualifier_to <- "IS NULL"
   qualifier_insert = FALSE
@@ -20,9 +22,6 @@ if (qualifier_to == "NA") {
   qualifier_to <- paste0("= '",qualifier_to,"'")
   qualifier_insert = TRUE
 }
-
-# clean up wildcards user might have added
-qualifier_to <- clean_qualifier(qualifier_to)
 
 ## <-- Get PKs for table updates -->
 ## Samples -->
@@ -199,12 +198,6 @@ if (nrow(matched_rows)>0) {
     renderTable({
       displayMatchedRows
     }, striped = TRUE, bordered = TRUE, width = "100%"),
-    # footer = tagList(
-    #   modalButton("Cancel"),
-    #   downloadButton("download_conflicts", "Download CSV", class = "btn-info"),
-    #   actionButton("submit_check", "Override Anyway", class = "btn-danger")
-    # ),
-    #easyClose = TRUE,
     size = "l"
   ))
 } else {
@@ -240,11 +233,6 @@ if (nrow(matched_rows)>0) {
       renderTable({
         speciesOccured
       }, striped = TRUE, bordered = TRUE, width = "100%"),
-      # footer = tagList(
-      #   downloadButton("download_update_results", "Download CSV", class = "btn-success"),
-      #   modalButton("OK")
-      # ),
-      #easyClose = TRUE
     ))
     # update parent Sync Keys ->
     DBI::dbExecute(mydb, event_updateQ)

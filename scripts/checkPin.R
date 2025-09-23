@@ -1,5 +1,5 @@
 
-if (pin == "8872391") {
+if (pin == "123") {
   removeModal()
   # and run task
   source("scripts/updateSpecies/updateSpeciesA.R", local = TRUE)
