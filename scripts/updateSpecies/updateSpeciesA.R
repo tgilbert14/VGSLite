@@ -13,7 +13,7 @@ order by Sample.FK_Species")
 speciesInUse <- dbGetQuery(mydb, sp_check)
 
 # Combine both values with a hyphen
-species_choices <- paste(speciesInUse$FK_Species, speciesInUse$SpeciesQualifier, sep = "-")
+species_choices <- c("", paste(speciesInUse$FK_Species, speciesInUse$SpeciesQualifier, sep = "-"))
 
 updateSelectInput(session, "sp_choice", selected = "")
 
