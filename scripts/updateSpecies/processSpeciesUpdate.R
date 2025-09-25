@@ -233,6 +233,7 @@ if (nrow(matched_rows)>0) {
       renderTable({
         speciesOccured
       }, striped = TRUE, bordered = TRUE, width = "100%"),
+      size = "l"
     ))
     # update parent Sync Keys ->
     DBI::dbExecute(mydb, event_updateQ)

@@ -114,18 +114,18 @@ ui <- fluidPage(
                             textOutput("selected_results"),
                             # move events modals
                             actionButton("open_site_modal_B", "TO",
-                                         icon = icon(	"arrow-right")), br(),
+                                         icon = icon(	"arrow-right"), class = "btn-info"), br(),
                             actionButton("open_event_modal", "Select Event to MOVE",
-                                         icon = icon("exchange-alt")), br(),
+                                         icon = icon("exchange-alt"), class = "btn-info"), br(),
                             actionButton("open_results_modal", "Move Event",
-                                         icon = icon("play")),
+                                         icon = icon("play"), class = "btn-success"),
                             # update species modals
                             actionButton("open_sp_modal_B", "TO",
-                                         icon = icon(	"arrow-right")), br(),
+                                         icon = icon("arrow-right"), class = "btn-info"), br(),
                             actionButton("open_sp_modal", "Update Species",
-                                         icon = icon("play")),
+                                         icon = icon("play"), class = "btn-success"),
                             actionButton("open_add_another_species", "Update Another Species?",
-                                         icon = icon("refresh"))
+                                         icon = icon("refresh"), class = "btn-danger")
                             ) # end help window tab
                    
                    ) # end of all tabs
