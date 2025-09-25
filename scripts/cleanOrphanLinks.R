@@ -6,12 +6,12 @@ showModal(modalDialog(
   title = "Cleaning database...",
   tags$div(
     style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
-    paste0(result, " orphaned Site Class Links cleaned ✅")
+    paste0(result, " orphaned Site Class Link(s) cleaned ✅")
   ),
   footer = tagList(
     modalButton("OK"),
   ),
-  #easyClose = TRUE
+  easyClose = TRUE
 ))
 Sys.sleep(1.5)
 
@@ -20,7 +20,7 @@ showModal(modalDialog(
   title = "Cleaning database...",
   tags$div(
     style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
-    paste0(result, " orphaned Protocols cleaned ✅")
+    paste0(result, " orphaned Protocol(s) cleaned ✅")
   ),
   footer = tagList(
     modalButton("OK"),
@@ -34,7 +34,7 @@ showModal(modalDialog(
   title = "Cleaning database...",
   tags$div(
     style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
-    paste0(result, " unsued Protocols removed from Protocol Manager ✅")
+    paste0(result, " unsued Protocol(s) removed from Protocol Manager ✅")
   ),
   footer = tagList(
     modalButton("OK"),
@@ -48,7 +48,7 @@ showModal(modalDialog(
   title = "Cleaning database...",
   tags$div(
     style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
-    paste0(result, " orphaned Contact Links cleaned ✅")
+    paste0(result, " orphaned Contact Link(s) cleaned ✅")
   ),
   footer = tagList(
     modalButton("OK"),
