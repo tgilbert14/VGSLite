@@ -13,16 +13,13 @@ order by Sample.FK_Species")
 speciesInUse <- dbGetQuery(mydb, sp_check_NRCS_only)
 
 speciesLeft <- subset(speciesInUse, paste(FK_Species, SpeciesQualifier, sep = "-") != input$sp_choice)
-species_choices_2 <- c(
-  paste(speciesLeft$FK_Species, speciesLeft$SpeciesQualifier, sep = "-"),
-  "New Species"
-)
+species_choices_2 <- c("", paste(speciesLeft$FK_Species, speciesLeft$SpeciesQualifier, sep = "-"), "New Species")
 
-updateSelectInput(session, "sp_choice_2", selected = "")
+selectInput("sp_choice_2", "TO", choices = species_choices_2, selected = "")
 
 # pop up for update TO species
 showModal(modalDialog(
-  title = "Update TO",
+  title = "Select species or select 'New Species' to add",
   selectInput("sp_choice_2", "TO", choices = setNames(species_choices_2, species_choices_2), selected = NULL),
   footer = tagList(
     modalButton("Cancel"),

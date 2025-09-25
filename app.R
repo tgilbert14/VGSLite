@@ -280,6 +280,10 @@ server <- function(input, output, session) {
       newSpQualifier <- input$new_qualifier
       source("scripts/updateSpecies/updateNewSpecies.R", local = TRUE)
     })
+    observeEvent(input$submit_new_species_accident, {
+      speciesTo <- input$sp_choice_2
+      source("scripts/updateSpecies/updateSpeciesB_confirm_accidentalAdd.R", local = TRUE)
+    })
     
     # UPDATE SPECIES CHECK (A TO B) -->
     observeEvent(input$open_sp_modal, {
