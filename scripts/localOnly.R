@@ -27,84 +27,106 @@ while (x <= nrow(locate_pks[[1]])) {
 }
 Sys.sleep(0.5)
 
+showModal(modalDialog(
+  title = "Moving data to local folders...",
+  tags$div(
+    style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
+    paste0("Process started...")
+  ),
+  footer = tagList(
+    modalButton("OK"),
+  ),
+  easyClose = TRUE
+))
+
 result <- dbExecute(mydb, updateToLocal.contactLinks)
-if (result > 0) {
-  shinyjs::alert("✅ Contact Links moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Contact Links found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Contact Links moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Contact Links found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.sample)
-if (result > 0) {
-  shinyjs::alert("✅ Sample Data moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Sample Data found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Sample Data moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Sample Data found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.events)
-if (result > 0) {
-  shinyjs::alert("✅ Events moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Events found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Events moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Events found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.eventGroups)
-if (result > 0) {
-  shinyjs::alert("✅ Event Groups moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Event Groups found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Event Groups moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Event Groups found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.protocol)
-if (result > 0) {
-  shinyjs::alert("✅ Protocols moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Protocols found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Protocols moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Protocols found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.site)
-if (result > 0) {
-  shinyjs::alert("✅ Sites moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Sites found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Sites moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Sites found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.siteClass)
-if (result > 0) {
-  shinyjs::alert("✅ Folders moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Folders found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Folders moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Folders found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.siteClassLinks)
-if (result > 0) {
-  shinyjs::alert("✅ Folder Links moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Folder Links found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Folder Links moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Folder Links found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.inquiryDatum)
-if (result > 0) {
-  shinyjs::alert("✅ Survey Data moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Inquiry Data found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Survey Data moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Inquiry Data found.")
+# }
 Sys.sleep(0.5)
 
 result <- dbExecute(mydb, updateToLocal.inquiry)
-if (result > 0) {
-  shinyjs::alert("✅ Surveys moved to local!")
-} else {
-  shinyjs::alert("⚠️ No Surveys found.")
-}
+# if (result > 0) {
+#   shinyjs::alert("✅ Surveys moved to local!")
+# } else {
+#   shinyjs::alert("⚠️ No Surveys found.")
+# }
 Sys.sleep(0.5)
 
-shinyjs::alert("✨ Complete! ☑") 
+showModal(modalDialog(
+  title = "Move Complete ✨",
+  tags$div(
+    style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
+    paste0("Data moved to local folders ✅")
+  ),
+  footer = tagList(
+    modalButton("OK"),
+  ),
+  easyClose = TRUE
+))
