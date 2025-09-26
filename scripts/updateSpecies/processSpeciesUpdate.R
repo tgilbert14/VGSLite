@@ -229,6 +229,7 @@ if (nrow(matched_rows)>0) {
       tags$div(
         modalButton("OK"),
         downloadButton("download_update_results", "Download CSV", class = "btn-success"),
+        actionButton("open_add_another_species", "Update Another Species", class = "btn-warning", icon = icon("refresh")),
       ),
       renderTable({
         speciesOccured

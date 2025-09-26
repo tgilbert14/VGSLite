@@ -33,9 +33,7 @@ ui <- fluidPage(
                      style = "background: none; border: none; padding: 0;",
                      class = "no-outline"
                    ),
-                   # old version
-                   # actionButton("open_task_modal", "Choose task",width = "100%",nicon = icon("list")),
-                   
+
                    br(),br(),
                    textOutput("selected_sub"),br(),
                    # for running another task after 1st task ran
@@ -124,8 +122,8 @@ ui <- fluidPage(
                                          icon = icon("arrow-right"), class = "btn-info"), br(),
                             actionButton("open_sp_modal", "Update Species",
                                          icon = icon("play"), class = "btn-success"),
-                            actionButton("open_add_another_species", "Update Another Species?",
-                                         icon = icon("refresh"), class = "btn-danger")
+                            actionButton("open_add_another_species", "Update Another Species",
+                                         icon = icon("refresh"), class = "btn-warning")
                             ) # end help window tab
                    
                    ) # end of all tabs

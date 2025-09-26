@@ -8,7 +8,6 @@ species_selected_to <- input$sp_choice_2
 
 # for when user tries to submit a species not on the list, same as 'New Species' -->
 if (species_selected_to == "" || is.na(species_selected_to)) {
-  #shinyjs::alert("⚠️ This species needs to be added using the 'New Species' option.")
   showModal(modalDialog(
     title = "⚠️ Species not currently being used in any other samples.",
     tags$div(
@@ -16,7 +15,6 @@ if (species_selected_to == "" || is.na(species_selected_to)) {
       "You must add this species first before you continue!"
     ),
     footer = tagList(
-      #modalButton("Cancel"),
       actionButton("submit_new_species_accident", "Add", class = "btn-success")
     )
   ))
