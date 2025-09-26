@@ -1,11 +1,15 @@
 # empty everything in the tombstone table (deletion cache)
 
 result <- dbExecute(mydb, clear.tombstone)
-if (result > 0) {
-  shinyjs::alert("✅ Tombstone cleared successfully!")
-} else {
-  shinyjs::alert("⚠️ Tombstone records are empty.")
-}
-Sys.sleep(0.5)
 
-shinyjs::alert("✨ Complete! ☑") 
+showModal(modalDialog(
+  title = "Clearing Deletion Cache",
+  tags$div(
+    style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
+    paste0(result, " Tombstone record(s) cleaned ✅")
+  ),
+  footer = tagList(
+    modalButton("OK"),
+  ),
+  easyClose = TRUE
+))
