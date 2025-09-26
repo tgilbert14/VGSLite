@@ -11,7 +11,7 @@ x=1
 while (x <= nrow(locate_pks[[1]])) {
   end <- locate_pks[[1]][x]
   
-  # change schema for certain situations (VGSOnline server)
+  # change schema for certain situations (VGS-Online server)
   if (is.na(end)) {
     end <- locate_pks[[2]][x]
     rootPK <- Convert2Hex(substr(rootFolders$Schema, end+17, end+52)[2])

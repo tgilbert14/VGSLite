@@ -75,7 +75,7 @@ showModal(modalDialog(
   title = "Cleaned database ✨",
   tags$div(
     style = "color: green; font-weight: bold; margin-bottom: 10px;",
-    paste0("Cleaning database process complete!")
+    paste0("Process Complete!")
   ),
   footer = tagList(
     modalButton("OK"),

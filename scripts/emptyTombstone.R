@@ -3,7 +3,7 @@
 result <- dbExecute(mydb, clear.tombstone)
 
 showModal(modalDialog(
-  title = "Clearing Deletion Cache",
+  title = "Cleaned Deletion Cache ✨",
   tags$div(
     style = "color: seagreen; font-weight: bold; margin-bottom: 10px;",
     paste0(result, " Tombstone record(s) cleaned ✅")
